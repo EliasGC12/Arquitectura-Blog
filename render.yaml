@@ -1,0 +1,28 @@
+services:
+  - type: web
+    name: arquitectura-blog-api
+    runtime: python
+    rootDir: Backend
+    buildCommand: bash build.sh
+    startCommand: gunicorn blog_core.wsgi:application --bind 0.0.0.0:$PORT
+    healthCheckPath: /admin/login/
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.12.3
+      - key: DEBUG
+        value: "False"
+      - key: SECRET_KEY
+        generateValue: true
+      - key: WEB_CONCURRENCY
+        value: "2"
+      - key: DATABASE_URL
+        fromDatabase:
+          name: arquitectura-blog-db
+          property: connectionString
+      - key: FRONTEND_URL
+        sync: false
+
+databases:
+  - name: arquitectura-blog-db
+    databaseName: blogfcc
+    plan: basic-256mb

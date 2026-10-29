@@ -1,0 +1,22 @@
+from django.db import migrations, models
+
+
+class Migration(migrations.Migration):
+
+    dependencies = [
+        ("posts", "0004_post_image_post_video_url"),
+    ]
+
+    operations = [
+        migrations.AddField(
+            model_name="comment",
+            name="parent",
+            field=models.ForeignKey(
+                blank=True,
+                null=True,
+                on_delete=models.CASCADE,
+                related_name="replies",
+                to="posts.comment",
+            ),
+        ),
+    ]
