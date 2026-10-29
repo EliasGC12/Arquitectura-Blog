@@ -43,6 +43,12 @@ class IsEditor(MinimumRolePermission):
     minimum_role = Usuario.Rol.EDITOR
 
 
+class IsSupervisor(MinimumRolePermission):
+    """SUPERVISOR o ADMIN."""
+
+    minimum_role = Usuario.Rol.SUPERVISOR
+
+
 class IsAdmin(MinimumRolePermission):
     """Solo ADMIN."""
 

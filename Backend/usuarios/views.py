@@ -7,7 +7,7 @@ from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework_simplejwt.views import TokenObtainPairView
 
 from .models import Usuario
-from .permissions import IsAdmin
+from .permissions import IsSupervisor
 from .serializers import (
     BlogTokenObtainPairSerializer,
     PendingUserSerializer,
@@ -38,7 +38,7 @@ class UserDetailView(generics.RetrieveUpdateAPIView):
 class PendingUserListView(generics.ListAPIView):
     serializer_class = PendingUserSerializer
     authentication_classes = [JWTAuthentication]
-    permission_classes = [IsAdmin]
+    permission_classes = [IsSupervisor]
     pagination_class = None
 
     def get_queryset(self):
@@ -49,13 +49,15 @@ class PendingUserListView(generics.ListAPIView):
 
 class ApproveUserView(APIView):
     authentication_classes = [JWTAuthentication]
-    permission_classes = [IsAdmin]
+    permission_classes = [IsSupervisor]
 
     def post(self, request, pk):
         user = get_object_or_404(Usuario, pk=pk, estado_cuenta=Usuario.EstadoCuenta.PENDIENTE)
         rol = request.data.get("rol") or Usuario.Rol.LECTOR
         if rol not in Usuario.Rol.values:
             raise ValidationError({"rol": "Elige un rol válido."})
+        if rol == Usuario.Rol.ADMIN and request.user.rol != Usuario.Rol.ADMIN:
+            raise ValidationError({"rol": "Solo un administrador puede asignar el rol Administrador."})
         user.rol = rol
         user.estado_cuenta = Usuario.EstadoCuenta.APROBADO
         user.is_active = True
@@ -66,7 +68,7 @@ class ApproveUserView(APIView):
 
 class RejectUserView(APIView):
     authentication_classes = [JWTAuthentication]
-    permission_classes = [IsAdmin]
+    permission_classes = [IsSupervisor]
 
     def post(self, request, pk):
         user = get_object_or_404(Usuario, pk=pk, estado_cuenta=Usuario.EstadoCuenta.PENDIENTE)
