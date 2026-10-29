@@ -1,0 +1,140 @@
+h1 {
+  margin-bottom: 0.35rem;
+}
+
+.intro,
+.empty {
+  color: var(--muted-color);
+}
+
+.list {
+  display: grid;
+  gap: 0.85rem;
+}
+
+.card {
+  align-items: flex-start;
+  background: var(--surface-color);
+  border: 1px solid var(--line-color);
+  border-radius: 1rem;
+  color: var(--text-color);
+  display: flex;
+  gap: 1rem;
+  padding: 1rem;
+}
+
+.avatar {
+  align-items: center;
+  background: var(--accent-soft);
+  border-radius: 999px;
+  color: var(--primary-color);
+  display: grid;
+  flex: 0 0 auto;
+  font-weight: 750;
+  height: 4.25rem;
+  justify-content: center;
+  object-fit: cover;
+  width: 4.25rem;
+}
+
+.body {
+  flex: 1;
+  min-width: 0;
+}
+
+h2,
+.email,
+.bio {
+  margin: 0;
+}
+
+h2 {
+  font-size: 1.15rem;
+}
+
+.email,
+.muted {
+  color: var(--muted-color);
+}
+
+.bio {
+  margin-top: 0.35rem;
+  white-space: pre-wrap;
+}
+
+.tools {
+  align-items: end;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  justify-content: space-between;
+  margin-top: 0.85rem;
+}
+
+label {
+  color: var(--muted-color);
+  display: grid;
+  font-size: 0.82rem;
+  font-weight: 650;
+  gap: 0.3rem;
+}
+
+select {
+  background: var(--surface-color);
+  border: 1px solid var(--line-color);
+  border-radius: 0.7rem;
+  color: var(--text-color);
+  font: inherit;
+  min-width: 12rem;
+  padding: 0.45rem 0.65rem;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+}
+
+button {
+  background: var(--primary-color);
+  border: 0;
+  border-radius: 999px;
+  color: var(--primary-contrast);
+  cursor: pointer;
+  font: inherit;
+  font-weight: 700;
+  padding: 0.5rem 0.9rem;
+  transition: filter 0.18s ease, transform 0.18s ease;
+}
+
+button:hover:not(:disabled) {
+  filter: brightness(1.08);
+  transform: translateY(-1px);
+}
+
+button.danger {
+  background: transparent;
+  border: 1px solid #e11d48;
+  color: #e11d48;
+}
+
+button:disabled {
+  cursor: wait;
+  opacity: 0.65;
+}
+
+.error,
+.success {
+  border-radius: 0.75rem;
+  padding: 0.65rem 0.75rem;
+}
+
+.error {
+  background: #fde8e8;
+  color: #9b1c1c;
+}
+
+.success {
+  background: var(--accent-soft);
+  color: var(--text-color);
+}

@@ -1,0 +1,16 @@
+@if (post().image) {
+  <img class="photo" [src]="post().image" [alt]="post().titulo" />
+}
+
+@if (preview(); as media) {
+  @if (embed(); as src) {
+    <div class="video">
+      <iframe [src]="src" [title]="'Video de ' + post().titulo" allowfullscreen></iframe>
+    </div>
+  } @else {
+    <a class="link-card" [href]="media.href" target="_blank" rel="noopener noreferrer">
+      <span>{{ media.host }}</span>
+      <strong>{{ media.href }}</strong>
+    </a>
+  }
+}

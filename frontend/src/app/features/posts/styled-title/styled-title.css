@@ -1,0 +1,21 @@
+:host {
+  display: block;
+}
+
+h1,
+h2 {
+  margin: 0 0 0.4rem;
+}
+
+h1 {
+  font-size: 1.8rem;
+}
+
+h2 {
+  font-size: 1.15rem;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}

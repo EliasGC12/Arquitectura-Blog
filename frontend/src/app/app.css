@@ -1,0 +1,14 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  min-height: 100dvh;
+}
+
+main {
+  box-sizing: border-box;
+  flex: 1;
+  margin: 0 auto;
+  max-width: 1200px;
+  padding: 1.25rem 0 6.5rem;
+  width: min(1200px, 92%);
+}

@@ -1,0 +1,20 @@
+:host {
+  display: block;
+}
+
+article {
+  background: var(--surface-color);
+  border: 1px solid var(--line-color);
+  color: var(--text-color);
+  border-radius: 0.75rem;
+  padding: 1.25rem;
+}
+
+h2 {
+  font-size: 1.125rem;
+  margin: 0 0 0.5rem;
+}
+
+p {
+  margin: 0;
+}

@@ -1,0 +1,26 @@
+<h1>Mis comentarios</h1>
+<p class="intro">Comentarios escritos en tus publicaciones.</p>
+
+@if (errorMessage()) {
+  <p class="error" role="alert">{{ errorMessage() }}</p>
+}
+
+@if (!errorMessage() && comments().length === 0) {
+  <p>Todavía no hay comentarios en tus publicaciones.</p>
+} @else {
+  <section class="list">
+    @for (comment of comments(); track comment.id) {
+      <article>
+        <p class="content">{{ comment.content }}</p>
+        <p class="meta">
+          <a [routerLink]="['/posts', comment.post]">{{ comment.post_titulo }}</a>
+          <span>{{ comment.author.username }}</span>
+          <time [attr.datetime]="comment.created_at">{{ timeAgo(comment.created_at) }}</time>
+          @if (!comment.is_approved) {
+            <span>Pendiente de aprobación</span>
+          }
+        </p>
+      </article>
+    }
+  </section>
+}

@@ -1,0 +1,65 @@
+.editor {
+  display: grid;
+  gap: 0.45rem;
+}
+
+.tools {
+  align-items: end;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.55rem;
+}
+
+.tools label {
+  color: var(--muted-color);
+  display: grid;
+  font-size: 0.78rem;
+  gap: 0.25rem;
+}
+
+.tools select,
+.tools button {
+  background: var(--bubble-color);
+  border: 1px solid var(--line-color);
+  border-radius: 0.5rem;
+  color: var(--text-color);
+  font: inherit;
+  padding: 0.4rem 0.65rem;
+}
+
+.tools button {
+  cursor: pointer;
+}
+
+.tools button.active {
+  background: var(--accent-soft);
+  border-color: var(--primary-color);
+}
+
+.tools input[type='color'] {
+  background: var(--surface-color);
+  border: 1px solid var(--line-color);
+  border-radius: 0.5rem;
+  height: 2.15rem;
+  padding: 0.15rem;
+  width: 2.8rem;
+}
+
+textarea {
+  background: var(--surface-color);
+  border: 1px solid var(--line-color);
+  border-radius: 0.65rem;
+  color: var(--editor-color, #1c1e21) !important;
+  font-family: var(--editor-font, Arial, sans-serif) !important;
+  font-style: var(--editor-style, normal) !important;
+  font-weight: var(--editor-weight, 400) !important;
+  min-height: 6.5rem;
+  padding: 0.65rem 0.75rem;
+  resize: vertical;
+  width: 100%;
+}
+
+textarea:focus {
+  border-color: var(--primary-color);
+  outline: none;
+}

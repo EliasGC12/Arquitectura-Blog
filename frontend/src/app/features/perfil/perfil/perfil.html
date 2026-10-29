@@ -1,0 +1,249 @@
+@if (errorMessage()) {
+  <p class="error" role="alert">{{ errorMessage() }}</p>
+}
+
+@if (successMessage()) {
+  <p class="success" role="status">{{ successMessage() }}</p>
+}
+
+@if (perfil(); as datos) {
+  <section class="profile">
+    <div class="cover" [style.background]="coverColor()">
+      @if (shownCover(); as cover) {
+        <img [src]="cover" alt="Imagen de portada" />
+      }
+      <div class="cover-tools">
+        <label class="cover-btn">
+          Cambiar portada
+          <input type="file" accept="image/*" (change)="onCover($event)" />
+        </label>
+        @if (coverDirty()) {
+          <button type="button" (click)="saveCover()">Guardar portada</button>
+        }
+      </div>
+    </div>
+
+    <div class="identity">
+      @if (picturePreview()) {
+        <img class="avatar" [src]="picturePreview()" alt="Foto de perfil de {{ datos.username }}" />
+      } @else {
+        <span class="avatar" aria-hidden="true">{{ initial() }}</span>
+      }
+      <div class="person">
+        <h1>{{ datos.username }}</h1>
+        <p class="role">{{ roleLabel(datos.rol) }}</p>
+        <p class="email">{{ datos.email }}</p>
+        @if (datos.bio) {
+          <p class="bio">{{ datos.bio }}</p>
+        }
+      </div>
+      <div class="actions">
+        <button type="button" (click)="togglePanel('account')">Editar perfil</button>
+        <button type="button" class="secondary" (click)="togglePanel('public')">
+          Editar información pública
+        </button>
+        <button type="button" class="quiet" (click)="logout()">Cerrar sesión</button>
+      </div>
+    </div>
+
+    <section class="avatars">
+      <h2>Avatares</h2>
+      <p>Elige uno con un clic. Si prefieres tu propia foto, súbela en Editar perfil.</p>
+      <div class="gallery">
+        @for (avatar of presetAvatars; track avatar.style + avatar.seed) {
+          <button
+            type="button"
+            [class.selected]="selectedAvatar() === avatar.style + ':' + avatar.seed"
+            [disabled]="submitting()"
+            (click)="pickAvatar(avatar.style, avatar.seed)"
+            [attr.aria-label]="'Usar avatar ' + avatar.seed"
+          >
+            <img [src]="avatarSrc(avatar.style, avatar.seed)" alt="" />
+          </button>
+        }
+      </div>
+    </section>
+
+    @if (panel() === 'account') {
+      <form class="panel" [formGroup]="accountForm" (ngSubmit)="saveAccount()">
+        <h2>Editar perfil</h2>
+        <label>
+          Nombre de usuario
+          <input type="text" formControlName="username" />
+        </label>
+        <label>
+          Foto de perfil desde tu computadora
+          <input type="file" accept="image/*" (change)="onAvatar($event)" />
+        </label>
+        <div class="actions">
+          <button type="submit" [disabled]="submitting()">Guardar</button>
+          <button type="button" class="secondary" (click)="panel.set(null)">Cancelar</button>
+        </div>
+      </form>
+    }
+
+    @if (panel() === 'public') {
+      <form class="panel" [formGroup]="publicForm" (ngSubmit)="savePublic()">
+        <h2>Editar información pública</h2>
+        <label>
+          Biografía
+          <textarea rows="4" formControlName="bio"></textarea>
+        </label>
+        <label>
+          Color de portada
+          <input type="color" formControlName="cover_color" />
+        </label>
+        <label>
+          Imagen de portada
+          <input type="file" accept="image/*" (change)="onCover($event)" />
+        </label>
+        @if (datos.cover_image || shownCover()) {
+          <button type="button" class="secondary" (click)="removeCover()">Quitar imagen de portada</button>
+        }
+        <div class="actions">
+          <button type="submit" [disabled]="submitting()">Guardar</button>
+          <button type="button" class="secondary" (click)="panel.set(null)">Cancelar</button>
+        </div>
+      </form>
+    }
+
+    <nav class="tabs" aria-label="Secciones del perfil">
+      <button type="button" [class.active]="tab() === 'posts'" (click)="tab.set('posts')">
+        Publicaciones <span>{{ myPosts().length }}</span>
+      </button>
+      <button type="button" [class.active]="tab() === 'notices'" (click)="tab.set('notices')">
+        Notificaciones de Comentarios <span>{{ notices().length }}</span>
+      </button>
+    </nav>
+
+    @if (listError()) {
+      <p class="error" role="alert">{{ listError() }}</p>
+    }
+
+    @if (tab() === 'posts') {
+      @if (myPosts().length === 0) {
+        <p class="empty">Todavía no tienes publicaciones.</p>
+      } @else {
+        <div class="posts">
+          @for (post of myPosts(); track post.id) {
+            <article>
+              <app-styled-title
+                [titulo]="post.titulo"
+                [font]="post.titulo_font"
+                [color]="post.titulo_color"
+                [bold]="post.titulo_bold"
+                [italic]="post.titulo_italic"
+                [postId]="post.id"
+              />
+              <p class="meta">
+                <span>{{ post.estado }}</span>
+                <time [attr.datetime]="post.fecha_creacion">{{ timeAgo(post.fecha_creacion) }}</time>
+              </p>
+              <app-rich-content class="excerpt" [value]="post.contenido" />
+            </article>
+          }
+        </div>
+      }
+    } @else {
+      @if (replyNote()) {
+        <p class="success" role="status">{{ replyNote() }}</p>
+      }
+      @if (notices().length === 0) {
+        <p class="empty">
+          @if (datos.rol === 'LECTOR') {
+            Todavía no has comentado en ninguna publicación.
+          } @else {
+            Todavía no hay comentarios en tus publicaciones.
+          }
+        </p>
+      } @else {
+        <ul class="notices">
+          @for (item of notices(); track item.id) {
+            <li>
+              <div class="notice-head">
+                @if (item.author.profile_picture) {
+                  <img class="mini" [src]="item.author.profile_picture" alt="" />
+                } @else {
+                  <span class="mini">{{ item.author.username.charAt(0) }}</span>
+                }
+                <div>
+                  <p>
+                    <strong>{{ item.author.username }}</strong>
+                    @if (datos.rol === 'LECTOR') {
+                      comentaste en
+                    } @else {
+                      comentó en
+                    }
+                    <a [routerLink]="['/posts', item.post]">{{ item.post_titulo }}</a>
+                  </p>
+                  <time [attr.datetime]="item.created_at">{{ timeAgo(item.created_at) }}</time>
+                </div>
+              </div>
+              <p class="body">{{ item.content }}</p>
+              @if (item.reply_to) {
+                <p class="meta">En respuesta a {{ item.reply_to }}</p>
+              }
+              @if (!item.is_approved) {
+                <p class="meta">Pendiente de aprobación</p>
+                @if (canModerate()) {
+                  <div class="actions">
+                    <button
+                      type="button"
+                      (click)="approveNotice(item)"
+                      [disabled]="moderatingCommentId() === item.id"
+                    >
+                      Aprobar
+                    </button>
+                    <button
+                      type="button"
+                      class="secondary"
+                      (click)="askRejectNotice(item)"
+                      [disabled]="moderatingCommentId() === item.id"
+                    >
+                      Rechazar
+                    </button>
+                  </div>
+                }
+              }
+              @if (replyOpen() === item.id) {
+                <form class="reply" (submit)="reply(item, $event)">
+                  <label>
+                    Respuesta
+                    <textarea
+                      rows="3"
+                      [value]="replyDrafts()[item.id] ?? ''"
+                      (input)="setReply(item.id, $event)"
+                    ></textarea>
+                  </label>
+                  <div class="actions">
+                    <button type="submit" class="action-send" [disabled]="replyBusy() === item.id">
+                      <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M4 12 20 4.5 14.2 19.5 11.4 13.2 4 12z" />
+                      </svg>
+                      <span>Enviar respuesta</span>
+                    </button>
+                    <button type="button" class="secondary" (click)="replyOpen.set(null)">Cancelar</button>
+                  </div>
+                </form>
+              } @else {
+                <button type="button" class="secondary" (click)="replyOpen.set(item.id)">Responder</button>
+              }
+              @if (sentReplies()[item.id]; as sent) {
+                <p class="body">{{ sent }}</p>
+              }
+            </li>
+          }
+        </ul>
+      }
+    }
+  </section>
+} @else if (!errorMessage()) {
+  <p>Cargando perfil...</p>
+}
+
+<app-reject-dialog
+  [open]="rejectTarget() !== null"
+  title="Rechazar comentario"
+  (cancelled)="rejectTarget.set(null)"
+  (confirmed)="confirmReject($event)"
+/>

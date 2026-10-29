@@ -1,0 +1,99 @@
+@if (tree().length === 0) {
+  <p class="empty">Todavía no hay comentarios.</p>
+} @else {
+  <div class="thread">
+    <ng-template #node let-item>
+      <article class="comment">
+        <div class="row">
+          @if (item.comment.author.profile_picture) {
+            <img class="avatar" [src]="item.comment.author.profile_picture" alt="" />
+          } @else {
+            <span class="avatar">{{ initial(item.comment.author.username) }}</span>
+          }
+          <div class="body">
+            <div class="bubble">
+              <p class="name-line">
+                <strong>{{ item.comment.author.username }}</strong>
+                @if (roleLabel(item.comment.author.rol)) {
+                  <span class="role">{{ roleLabel(item.comment.author.rol) }}</span>
+                }
+              </p>
+              <p class="text">{{ item.comment.content }}</p>
+            </div>
+            <div class="actions">
+              <time [attr.datetime]="item.comment.created_at">{{ timeAgo(item.comment.created_at) }}</time>
+              <button
+                type="button"
+                class="chip like"
+                [class.active]="likeOf(item.comment).liked"
+                (click)="toggleLike(item.comment)"
+              >
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M12 20.5s-6.5-4.1-6.5-8.4A3.6 3.6 0 0 1 12 9a3.6 3.6 0 0 1 6.5 3.1c0 4.3-6.5 8.4-6.5 8.4z" />
+                </svg>
+                <span>Me gusta</span>
+                @if (likeOf(item.comment).count > 0) {
+                  <span class="count">{{ likeOf(item.comment).count }}</span>
+                }
+              </button>
+              <button type="button" class="chip" (click)="toggleReply(item.comment.id)">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M5 6.5h14a1 1 0 0 1 1 1v7.5a1 1 0 0 1-1 1H9.2L5 19.5v-3.5H5a1 1 0 0 1-1-1V7.5a1 1 0 0 1 1-1z" />
+                </svg>
+                <span>Responder</span>
+              </button>
+              @if (!item.comment.is_approved) {
+                <span class="pending">Pendiente de aprobación</span>
+              }
+            </div>
+            @if (replyOpen() === item.comment.id) {
+              <form class="reply" (submit)="sendReply(item.comment, $event)">
+                <textarea
+                  rows="2"
+                  placeholder="Escribe una respuesta..."
+                  [value]="replyDrafts()[item.comment.id] ?? ''"
+                  (input)="setReply(item.comment.id, $event)"
+                ></textarea>
+                <button type="submit" class="action-send" [disabled]="replyBusy() === item.comment.id">
+                  <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M4 12 20 4.5 14.2 19.5 11.4 13.2 4 12z" />
+                  </svg>
+                  <span>Enviar respuesta</span>
+                </button>
+              </form>
+            }
+            @if (!item.comment.is_approved && canModerate()) {
+              <div class="moderation">
+                <button
+                  type="button"
+                  (click)="approve.emit(item.comment)"
+                  [disabled]="approvingId() === item.comment.id"
+                >
+                  Aprobar
+                </button>
+                <button
+                  type="button"
+                  (click)="reject.emit(item.comment)"
+                  [disabled]="approvingId() === item.comment.id"
+                >
+                  Rechazar
+                </button>
+              </div>
+            }
+            @if (item.replies.length > 0) {
+              <div class="replies">
+                @for (child of item.replies; track child.comment.id) {
+                  <ng-container [ngTemplateOutlet]="node" [ngTemplateOutletContext]="{ $implicit: child }" />
+                }
+              </div>
+            }
+          </div>
+        </div>
+      </article>
+    </ng-template>
+
+    @for (item of tree(); track item.comment.id) {
+      <ng-container [ngTemplateOutlet]="node" [ngTemplateOutletContext]="{ $implicit: item }" />
+    }
+  </div>
+}

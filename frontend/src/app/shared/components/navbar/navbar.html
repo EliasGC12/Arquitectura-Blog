@@ -1,0 +1,78 @@
+<header>
+  <a class="brand" routerLink="/posts" aria-label="BLOG FCC">
+    <img src="/images/logo.png" alt="BLOG FCC" />
+  </a>
+  @if (loggedIn()) {
+    <div class="bell">
+      <button
+        type="button"
+        class="bell-button"
+        (click)="toggleBell()"
+        [attr.aria-expanded]="bellOpen()"
+        aria-label="Notificaciones"
+      >
+        🔔
+        @if (unreadCount() > 0) {
+          <span class="badge">{{ unreadCount() > 9 ? '9+' : unreadCount() }}</span>
+        }
+      </button>
+      @if (bellOpen()) {
+        <button type="button" class="bell-backdrop" aria-label="Cerrar notificaciones" (click)="bellOpen.set(false)"></button>
+        <div class="bell-panel" role="menu">
+          <p class="bell-title">Notificaciones</p>
+          @if (notices().length === 0) {
+            <p class="bell-empty">No tienes notificaciones.</p>
+          } @else {
+            <ul>
+              @for (item of notices(); track item.id) {
+                <li>
+                  <button type="button" [class.unread]="!item.is_read" (click)="openNotice(item)">
+                    <span>{{ noticeText(item) }}</span>
+                    <time [attr.datetime]="item.created_at">{{ timeAgo(item.created_at) }}</time>
+                  </button>
+                </li>
+              }
+            </ul>
+          }
+        </div>
+      }
+    </div>
+  }
+  <label class="theme-picker">
+    Tema
+    <select aria-label="Tema visual" (change)="onTheme($event)">
+      @for (item of themes; track item.id) {
+        <option [value]="item.id" [selected]="theme.current() === item.id">{{ item.label }}</option>
+      }
+    </select>
+  </label>
+  <button
+    type="button"
+    class="menu-toggle"
+    (click)="toggleMenu()"
+    [attr.aria-expanded]="menuOpen()"
+    aria-controls="main-nav"
+  >
+    Menú
+  </button>
+  <nav id="main-nav" [class.open]="menuOpen()">
+    <a routerLink="/posts" routerLinkActive="active">Explorar</a>
+    @if (loggedIn()) {
+      <a routerLink="/perfil" routerLinkActive="active">Perfil</a>
+    }
+    @if (canReview()) {
+      <a routerLink="/revision" routerLinkActive="active">Revisión pendientes</a>
+    }
+    @if (canManageUsers()) {
+      <a routerLink="/registros" routerLinkActive="active">Aprobación de usuarios</a>
+    }
+    @if (canSeeOwnComments()) {
+      <a routerLink="/mis-comentarios" routerLinkActive="active">Mis comentarios</a>
+    }
+    @if (loggedIn()) {
+      <button type="button" (click)="logout()">Cerrar sesión</button>
+    } @else {
+      <a routerLink="/auth" routerLinkActive="active">Iniciar sesión</a>
+    }
+  </nav>
+</header>

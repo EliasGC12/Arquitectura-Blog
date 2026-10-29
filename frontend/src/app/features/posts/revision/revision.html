@@ -1,0 +1,168 @@
+<h1>Revisión</h1>
+<p class="intro">Publicaciones pendientes de revisión.</p>
+
+@if (editingId()) {
+  <form [formGroup]="form" (ngSubmit)="save()">
+    <h2>Editar publicación</h2>
+    <label>
+      Título
+      <input type="text" formControlName="titulo" />
+    </label>
+    <div class="field">
+      <span>Contenido</span>
+      <app-rich-editor
+        [value]="form.controls.contenido.value"
+        [resetKey]="editingId()"
+        (valueChange)="onRich($event)"
+      />
+      <p class="live-label">Vista previa en vivo</p>
+      <article class="draft-preview">
+        <h2>{{ form.controls.titulo.value || 'Sin título' }}</h2>
+        <app-rich-content [value]="form.controls.contenido.value" />
+      </article>
+    </div>
+    <label>
+      Categoría
+      <select formControlName="category_id">
+        <option [ngValue]="null">Sin categoría</option>
+        @for (category of categories(); track category.id) {
+          <option [ngValue]="category.id">{{ category.nombre }}</option>
+        }
+      </select>
+    </label>
+    <label>
+      Nueva categoría
+      <input type="text" formControlName="category_name" placeholder="Si no está en la lista" />
+      <span class="hint">Si escribes un nombre, se crea y se usa al guardar.</span>
+    </label>
+    <label>
+      Etiquetas
+      <select formControlName="tag_ids" multiple>
+        @for (tag of tags(); track tag.id) {
+          <option [ngValue]="tag.id">{{ tag.nombre }}</option>
+        }
+      </select>
+    </label>
+    <label>
+      Nuevas etiquetas
+      <input type="text" formControlName="tag_names" placeholder="Separa varias con comas" />
+    </label>
+    <label>
+      Foto
+      <input type="file" accept="image/*" (change)="onImage($event)" />
+    </label>
+    @if (imagePreview()) {
+      <img class="preview" [src]="imagePreview()" alt="Vista previa" />
+    }
+    <label>
+      Enlace o video
+      <input type="url" formControlName="video_url" placeholder="https://" />
+    </label>
+    <label>
+      Estado
+      <select formControlName="estado">
+        @for (estado of estados; track estado) {
+          <option [value]="estado">{{ estado }}</option>
+        }
+      </select>
+    </label>
+    <div class="actions">
+      <button type="submit" [disabled]="submitting()">Guardar cambios</button>
+      <button type="button" (click)="cancel()">Cancelar</button>
+    </div>
+  </form>
+}
+
+@if (errorMessage()) {
+  <p class="error" role="alert">{{ errorMessage() }}</p>
+}
+
+@if (posts().length === 0) {
+  <p>No hay publicaciones pendientes.</p>
+} @else {
+  <section class="list">
+    @for (post of posts(); track post.id) {
+      <article>
+        <app-styled-title
+          [titulo]="post.titulo"
+          [font]="post.titulo_font"
+          [color]="post.titulo_color"
+          [bold]="post.titulo_bold"
+          [italic]="post.titulo_italic"
+          [postId]="post.id"
+        />
+        <app-rich-content [value]="post.contenido" />
+        <app-post-media [post]="post" />
+        <p class="meta">
+          <span>{{ post.autor.username }}</span>
+          <time [attr.datetime]="post.fecha_creacion">
+            {{ post.fecha_creacion | date: 'd MMM y, HH:mm' }}
+          </time>
+          <span>{{ post.estado }}</span>
+          @if (post.category) {
+            <span>{{ post.category.nombre }}</span>
+          }
+          @for (tag of post.tags; track tag.id) {
+            <span class="tag">#{{ tag.nombre }}</span>
+          }
+        </p>
+        <div class="actions">
+          <button type="button" class="primary" (click)="publish(post)" [disabled]="submitting()">
+            Aprobar
+          </button>
+          <button type="button" (click)="askRejectPost(post)" [disabled]="submitting()">Rechazar</button>
+        </div>
+      </article>
+    }
+  </section>
+  <nav class="pager" aria-label="Paginación">
+    <button type="button" (click)="goToPage(previousPage())" [disabled]="!previousPage()">
+      Anterior
+    </button>
+    <button type="button" (click)="goToPage(nextPage())" [disabled]="!nextPage()">Siguiente</button>
+  </nav>
+}
+
+<h2 class="section-title">Comentarios pendientes</h2>
+@if (pendingComments().length === 0) {
+  <p>No hay comentarios pendientes de aprobación.</p>
+} @else {
+  <section class="list">
+    @for (comment of pendingComments(); track comment.id) {
+      <article>
+        <p class="content">{{ comment.content }}</p>
+        <p class="meta">
+          <span>{{ comment.author.username }}</span>
+          <a [routerLink]="['/posts', comment.post]">{{ comment.post_titulo }}</a>
+          <time [attr.datetime]="comment.created_at">
+            {{ comment.created_at | date: 'd MMM y, HH:mm' }}
+          </time>
+        </p>
+        <div class="actions">
+          <button
+            type="button"
+            class="primary"
+            (click)="approveComment(comment)"
+            [disabled]="moderatingCommentId() === comment.id"
+          >
+            Aprobar
+          </button>
+          <button
+            type="button"
+            (click)="askRejectComment(comment)"
+            [disabled]="moderatingCommentId() === comment.id"
+          >
+            Rechazar
+          </button>
+        </div>
+      </article>
+    }
+  </section>
+}
+
+<app-reject-dialog
+  [open]="rejectRequest() !== null"
+  [title]="rejectRequest()?.kind === 'post' ? 'Rechazar publicación' : 'Rechazar comentario'"
+  (cancelled)="rejectRequest.set(null)"
+  (confirmed)="confirmReject($event)"
+/>

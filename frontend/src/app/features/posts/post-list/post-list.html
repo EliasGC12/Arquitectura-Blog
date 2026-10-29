@@ -1,0 +1,342 @@
+<h1>Explorar</h1>
+
+@if (canCreate()) {
+  <section class="composer">
+    @if (!showForm()) {
+      <button type="button" class="prompt" (click)="openCreate('estado')">
+        @if (currentUser()?.profile_picture) {
+          <img class="avatar" [src]="currentUser()?.profile_picture" alt="" />
+        } @else {
+          <span class="avatar" aria-hidden="true">{{ initial(currentUser()?.username ?? '') }}</span>
+        }
+        <span class="who">
+          <span class="name-line">
+            <strong>{{ currentUser()?.username }}</strong>
+            <span class="role">{{ roleLabel(currentUser()?.rol) }}</span>
+          </span>
+          <span>Escribir algo...</span>
+        </span>
+      </button>
+      <div class="quick" role="group" aria-label="Adjuntar">
+        <button type="button" (click)="openCreate('estado')">Estado</button>
+        <button type="button" (click)="openCreate('foto')">Foto</button>
+        <button type="button" (click)="openCreate('enlace')">Enlace</button>
+        <button type="button" (click)="openCreate('video')">Video</button>
+      </div>
+    } @else {
+      <form [formGroup]="form" (ngSubmit)="save()">
+        <div class="tabs" role="tablist">
+          <button type="button" [class.active]="composerTab() === 'estado'" (click)="composerTab.set('estado')">
+            Estado
+          </button>
+          <button type="button" [class.active]="composerTab() === 'foto'" (click)="composerTab.set('foto')">
+            Foto
+          </button>
+          <button type="button" [class.active]="composerTab() === 'enlace'" (click)="composerTab.set('enlace')">
+            Enlace
+          </button>
+          <button type="button" [class.active]="composerTab() === 'video'" (click)="composerTab.set('video')">
+            Video
+          </button>
+        </div>
+        <div class="post-head">
+          @if (currentUser()?.profile_picture) {
+            <img class="avatar" [src]="currentUser()?.profile_picture" alt="" />
+          } @else {
+            <span class="avatar" aria-hidden="true">{{ initial(currentUser()?.username ?? '') }}</span>
+          }
+          <div>
+            <p class="name-line">
+              <strong>{{ currentUser()?.username }}</strong>
+              <span class="role">{{ roleLabel(currentUser()?.rol) }}</span>
+            </p>
+          </div>
+        </div>
+        <h2>{{ editingId() ? 'Editar publicación' : 'Nueva publicación' }}</h2>
+        <div class="field">
+          <span>Título</span>
+          <div class="title-tools" role="toolbar" aria-label="Formato del título">
+            <label>
+              Fuente
+              <select formControlName="titulo_font">
+                @for (item of titleFonts; track item.label) {
+                  <option [value]="item.label">{{ item.label }}</option>
+                }
+              </select>
+            </label>
+            <label>
+              Color
+              <input type="color" formControlName="titulo_color" />
+            </label>
+            <button
+              type="button"
+              [class.active]="form.controls.titulo_bold.value"
+              (click)="form.controls.titulo_bold.setValue(!form.controls.titulo_bold.value)"
+            >
+              <strong>Negrita</strong>
+            </button>
+            <button
+              type="button"
+              [class.active]="form.controls.titulo_italic.value"
+              (click)="form.controls.titulo_italic.setValue(!form.controls.titulo_italic.value)"
+            >
+              <em>Cursiva</em>
+            </button>
+          </div>
+          <input
+            class="title-input"
+            type="text"
+            formControlName="titulo"
+            [style.--title-font]="titleFontCss()"
+            [style.--title-color]="form.controls.titulo_color.value"
+            [style.--title-weight]="form.controls.titulo_bold.value ? '700' : '400'"
+            [style.--title-style]="form.controls.titulo_italic.value ? 'italic' : 'normal'"
+          />
+          @if (form.controls.titulo.touched && form.controls.titulo.invalid) {
+            <span class="error">El título es obligatorio.</span>
+          }
+        </div>
+        <div class="field">
+          <span>Contenido</span>
+          <app-rich-editor
+            [value]="form.controls.contenido.value"
+            [resetKey]="editingId() ?? 'nuevo'"
+            (valueChange)="onRich($event)"
+          />
+          @if (form.controls.contenido.touched && form.controls.contenido.invalid) {
+            <span class="error">El contenido es obligatorio.</span>
+          }
+          <span class="hint">La fuente, el color, la negrita y la cursiva se guardan con la publicación.</span>
+        </div>
+        @if (showLivePreview()) {
+          <article class="post-card live-preview" aria-label="Vista previa en vivo">
+            <p class="live-label">Vista previa en vivo</p>
+            <header class="post-head">
+              @if (currentUser()?.profile_picture) {
+                <img class="avatar" [src]="currentUser()?.profile_picture" alt="" />
+              } @else {
+                <span class="avatar" aria-hidden="true">{{ initial(currentUser()?.username ?? '') }}</span>
+              }
+              <div>
+                <p class="name-line">
+                  <strong>{{ currentUser()?.username }}</strong>
+                  <span class="role">{{ roleLabel(currentUser()?.rol) }}</span>
+                </p>
+                <time>ahora mismo</time>
+              </div>
+            </header>
+            <app-styled-title
+              [titulo]="form.controls.titulo.value"
+              [font]="form.controls.titulo_font.value"
+              [color]="form.controls.titulo_color.value"
+              [bold]="form.controls.titulo_bold.value"
+              [italic]="form.controls.titulo_italic.value"
+            />
+            <app-rich-content [value]="liveContent()" />
+            @if (imagePreview()) {
+              <img class="preview" [src]="imagePreview()" alt="" />
+            }
+            @if (liveVideoPost(); as media) {
+              <app-post-media [post]="media" />
+            }
+            <p class="meta">
+              @if (previewCategory()) {
+                <span>{{ previewCategory() }}</span>
+              }
+              @for (name of previewTagNames(); track name) {
+                <span class="tag">#{{ name }}</span>
+              }
+            </p>
+          </article>
+        }
+        @if (composerTab() === 'foto') {
+          <label>
+            Foto
+            <input type="file" accept="image/*" (change)="onImage($event)" />
+          </label>
+          @if (imagePreview()) {
+            <img class="preview" [src]="imagePreview()" alt="Vista previa de la foto" />
+          }
+        }
+        @if (composerTab() === 'enlace' || composerTab() === 'video') {
+          <label>
+            {{ composerTab() === 'video' ? 'Video' : 'Enlace' }}
+            <input
+              type="url"
+              formControlName="video_url"
+              (input)="rememberVideo($event)"
+              [placeholder]="composerTab() === 'video' ? 'https://www.youtube.com/watch?v=' : 'https://'"
+            />
+            <span class="hint">
+              @if (composerTab() === 'video') {
+                YouTube o Vimeo se muestran como reproductor. Otro enlace se ve como tarjeta.
+              } @else {
+                Se muestra como tarjeta al publicar.
+              }
+            </span>
+          </label>
+        }
+        <details>
+          <summary>Detalles</summary>
+          <label>
+            Categoría
+            <select formControlName="category_id">
+              <option [ngValue]="null">Sin categoría</option>
+              @for (category of categories(); track category.id) {
+                <option [ngValue]="category.id">{{ category.nombre }}</option>
+              }
+            </select>
+          </label>
+          <label>
+            Nueva categoría
+            <input type="text" formControlName="category_name" placeholder="Si no está en la lista" />
+          </label>
+          <label>
+            Etiquetas
+            <select formControlName="tag_ids" multiple>
+              @for (tag of tags(); track tag.id) {
+                <option [ngValue]="tag.id">{{ tag.nombre }}</option>
+              }
+            </select>
+          </label>
+          <label>
+            Nuevas etiquetas
+            <input type="text" formControlName="tag_names" placeholder="Separa varias con comas" />
+          </label>
+          <label>
+            Estado
+            <select formControlName="estado">
+              @for (estado of estadosDisponibles(); track estado) {
+                <option [value]="estado">{{ estado }}</option>
+              }
+            </select>
+          </label>
+        </details>
+        <button type="button" class="preview-toggle" (click)="showLivePreview.set(!showLivePreview())">
+          {{ showLivePreview() ? '👁️ Ocultar Vista Previa' : '👁️ Mostrar Vista Previa' }}
+        </button>
+        <div class="actions">
+          <button type="submit" [disabled]="submitting()">
+            {{ editingId() ? 'Guardar cambios' : canModerate() ? 'Publicar' : 'Enviar a revisión' }}
+          </button>
+          <button type="button" (click)="cancel()">Cancelar</button>
+        </div>
+      </form>
+    }
+  </section>
+}
+
+@if (errorMessage()) {
+  <p class="error" role="alert">{{ errorMessage() }}</p>
+}
+
+@if (posts().length === 0) {
+  <p class="empty">El muro está en calma. Todavía no hay publicaciones.</p>
+} @else {
+  <section class="feed">
+    @for (post of posts(); track post.id) {
+      <article class="post-card">
+        <header class="post-head">
+          @if (post.autor.profile_picture) {
+            <img class="avatar" [src]="post.autor.profile_picture" [alt]="''" />
+          } @else {
+            <span class="avatar" aria-hidden="true">{{ initial(post.autor.username) }}</span>
+          }
+          <div>
+            <p class="name-line">
+              <strong>{{ post.autor.username }}</strong>
+              <span class="role">{{ roleLabel(post.autor.rol) }}</span>
+            </p>
+            <time [attr.datetime]="post.fecha_creacion">{{ timeAgo(post.fecha_creacion) }}</time>
+          </div>
+        </header>
+        <app-styled-title
+          [titulo]="post.titulo"
+          [font]="post.titulo_font"
+          [color]="post.titulo_color"
+          [bold]="post.titulo_bold"
+          [italic]="post.titulo_italic"
+          [postId]="post.id"
+        />
+        <app-rich-content class="excerpt" [value]="post.contenido" />
+        <app-post-media [post]="post" />
+        <p class="meta">
+          @if (post.estado !== 'PUBLICADO') {
+            <span class="badge">{{ post.estado }}</span>
+          }
+          @if (post.category) {
+            <span>{{ post.category.nombre }}</span>
+          }
+          @for (tag of post.tags; track tag.id) {
+            <span class="tag">#{{ tag.nombre }}</span>
+          }
+        </p>
+        @if (isAuthor(post) || canManage(post)) {
+          <div class="actions">
+            @if (isAuthor(post)) {
+              <button type="button" (click)="startEdit(post)">Editar</button>
+            }
+            @if (canManage(post)) {
+              <button type="button" (click)="remove(post)" [disabled]="submitting()">Eliminar</button>
+            }
+          </div>
+        }
+        <section class="comments">
+          <h3>Comentarios</h3>
+          @if (commentError(post.id)) {
+            <p class="error" role="alert">{{ commentError(post.id) }}</p>
+          }
+          @if (commentNote(post.id)) {
+            <p class="hint">{{ commentNote(post.id) }}</p>
+          }
+          <app-comment-thread
+            [comments]="post.comments"
+            [postId]="post.id"
+            [authenticated]="authenticated()"
+            [canModerate]="canModerate()"
+            [approvingId]="approvingId()"
+            (approve)="approve(post, $event)"
+            (reject)="askReject(post, $event)"
+            (posted)="appendComment(post, $event)"
+            (noted)="setCommentNote(post.id, $event)"
+            (failed)="setCommentError(post.id, $event)"
+          />
+          @if (authenticated()) {
+            <form class="comment-form" (submit)="submitComment(post, $event)">
+              <label>
+                Comentario
+                <textarea
+                  rows="2"
+                  placeholder="Escribe un comentario..."
+                  [value]="commentDraft(post.id)"
+                  (input)="setCommentDraft(post.id, textareaValue($event))"
+                ></textarea>
+              </label>
+              <button type="submit" class="action-send" [disabled]="commentIsBusy(post.id)">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M5 6.5h14a1 1 0 0 1 1 1v7.5a1 1 0 0 1-1 1H9.2L5 19.5v-3.5H5a1 1 0 0 1-1-1V7.5a1 1 0 0 1 1-1z" />
+                </svg>
+                <span>Comentar</span>
+              </button>
+            </form>
+          } @else {
+            <p>Inicia sesión para comentar.</p>
+          }
+        </section>
+      </article>
+    }
+  </section>
+  <nav class="pager" aria-label="Paginación">
+    <button type="button" (click)="goToPage(previousPage())" [disabled]="!previousPage()">
+      Anterior
+    </button>
+    <button type="button" (click)="goToPage(nextPage())" [disabled]="!nextPage()">Siguiente</button>
+  </nav>
+}
+
+<app-reject-dialog
+  [open]="rejectTarget() !== null"
+  title="Rechazar comentario"
+  (cancelled)="rejectTarget.set(null)"
+  (confirmed)="confirmReject($event)"
+/>

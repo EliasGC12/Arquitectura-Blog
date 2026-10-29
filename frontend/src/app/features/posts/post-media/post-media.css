@@ -1,0 +1,48 @@
+:host {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.photo {
+  border-radius: 0.75rem;
+  display: block;
+  max-height: 28rem;
+  object-fit: cover;
+  width: 100%;
+}
+
+.video {
+  aspect-ratio: 16 / 9;
+  background: #111827;
+  border-radius: 0.75rem;
+  overflow: hidden;
+}
+
+.video iframe {
+  border: 0;
+  height: 100%;
+  width: 100%;
+}
+
+.link-card {
+  background: #f0f2f5;
+  border: 1px solid #dddfe2;
+  border-radius: 0.75rem;
+  color: inherit;
+  display: grid;
+  gap: 0.25rem;
+  padding: 0.85rem 1rem;
+  text-decoration: none;
+}
+
+.link-card span {
+  color: #65676b;
+  font-size: 0.78rem;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+}
+
+.link-card strong {
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}

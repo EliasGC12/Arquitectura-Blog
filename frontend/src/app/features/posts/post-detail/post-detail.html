@@ -1,0 +1,88 @@
+<p><a routerLink="/posts">Volver al muro</a></p>
+
+@if (errorMessage()) {
+  <p class="error" role="alert">{{ errorMessage() }}</p>
+}
+
+@if (post(); as item) {
+  <article>
+    <header class="post-head">
+      @if (item.autor.profile_picture) {
+        <img class="avatar" [src]="item.autor.profile_picture" alt="" />
+      } @else {
+        <span class="avatar">{{ item.autor.username.charAt(0) }}</span>
+      }
+      <div>
+        <p class="name-line">
+          <strong>{{ item.autor.username }}</strong>
+          <span class="role">{{ roleLabel(item.autor.rol) }}</span>
+        </p>
+        <time [attr.datetime]="item.fecha_creacion">{{ timeAgo(item.fecha_creacion) }}</time>
+      </div>
+    </header>
+    <app-styled-title
+      level="h1"
+      [titulo]="item.titulo"
+      [font]="item.titulo_font"
+      [color]="item.titulo_color"
+      [bold]="item.titulo_bold"
+      [italic]="item.titulo_italic"
+    />
+    <p class="meta">
+      <span>{{ item.estado }}</span>
+      @if (item.category) {
+        <span>{{ item.category.nombre }}</span>
+      }
+      @for (tag of item.tags; track tag.id) {
+        <span class="tag">#{{ tag.nombre }}</span>
+      }
+    </p>
+    <app-rich-content [value]="item.contenido" />
+    <app-post-media [post]="item" />
+
+    <section class="comments">
+      <h2>Comentarios</h2>
+      @if (commentError()) {
+        <p class="error" role="alert">{{ commentError() }}</p>
+      }
+      @if (commentNote()) {
+        <p class="meta">{{ commentNote() }}</p>
+      }
+      <app-comment-thread
+        [comments]="item.comments"
+        [postId]="item.id"
+        [authenticated]="authenticated()"
+        [canModerate]="canModerate()"
+        [approvingId]="approvingId()"
+        (approve)="approve($event)"
+        (reject)="askReject($event)"
+        (posted)="appendComment($event)"
+        (noted)="commentNote.set($event)"
+        (failed)="commentError.set($event)"
+      />
+      @if (authenticated()) {
+        <form class="comment-form" (submit)="submitComment($event)">
+          <label>
+            Comentario
+            <textarea rows="3" [value]="draft()" (input)="draft.set(textareaValue($event))"></textarea>
+          </label>
+          <button type="submit" class="action-send" [disabled]="submitting()">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M5 6.5h14a1 1 0 0 1 1 1v7.5a1 1 0 0 1-1 1H9.2L5 19.5v-3.5H5a1 1 0 0 1-1-1V7.5a1 1 0 0 1 1-1z" />
+            </svg>
+            <span>Comentar</span>
+          </button>
+        </form>
+      } @else {
+        <p>Inicia sesión para comentar.</p>
+      }
+    </section>
+  </article>
+}
+
+<app-reject-dialog
+  [open]="rejectTarget() !== null"
+  title="Rechazar comentario"
+  (cancelled)="rejectTarget.set(null)"
+  (confirmed)="confirmReject($event)"
+/>

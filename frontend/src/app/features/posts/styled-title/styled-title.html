@@ -1,0 +1,9 @@
+@if (level() === 'h1') {
+  <h1 [ngStyle]="look()">{{ titulo() || 'Sin título' }}</h1>
+} @else if (postId(); as id) {
+  <h2>
+    <a [routerLink]="['/posts', id]" [ngStyle]="look()">{{ titulo() || 'Sin título' }}</a>
+  </h2>
+} @else {
+  <h2 [ngStyle]="look()">{{ titulo() || 'Sin título' }}</h2>
+}

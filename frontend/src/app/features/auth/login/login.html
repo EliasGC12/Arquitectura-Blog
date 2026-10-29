@@ -1,0 +1,96 @@
+<section class="auth-screen">
+  <article class="auth-card">
+    <img class="logo" src="/images/logo.png" alt="BLOG FCC" />
+    <h1>{{ mode() === 'login' ? 'Iniciar sesión' : 'Crear cuenta' }}</h1>
+    <p class="lead">
+      {{
+        mode() === 'login'
+          ? 'Entra con tu usuario y contraseña.'
+          : 'Cuéntanos quién eres. Un administrador revisará tu registro.'
+      }}
+    </p>
+
+    <div class="modes" role="tablist" aria-label="Formulario de acceso">
+      <button type="button" [class.active]="mode() === 'login'" (click)="showLogin()">
+        Iniciar sesión
+      </button>
+      <button type="button" [class.active]="mode() === 'register'" (click)="showRegister()">
+        Registro
+      </button>
+    </div>
+
+    @if (successMessage()) {
+      <p class="success" role="status">{{ successMessage() }}</p>
+    }
+
+    @if (mode() === 'login') {
+      <form [formGroup]="loginForm" (ngSubmit)="onLogin()">
+        <label>
+          Usuario
+          <input type="text" formControlName="username" autocomplete="username" />
+        </label>
+        <label>
+          Contraseña
+          <input type="password" formControlName="password" autocomplete="current-password" />
+        </label>
+        @if (errorMessage()) {
+          <p class="error" role="alert">{{ errorMessage() }}</p>
+        }
+        <button type="submit" [disabled]="submitting()">Iniciar Sesión</button>
+      </form>
+    } @else {
+      <form [formGroup]="registerForm" (ngSubmit)="onRegister()">
+        <label>
+          Usuario
+          <input type="text" formControlName="username" autocomplete="username" />
+        </label>
+        <label>
+          Correo electrónico
+          <input type="email" formControlName="email" autocomplete="email" />
+        </label>
+        <label>
+          Contraseña
+          <input type="password" formControlName="password" autocomplete="new-password" />
+        </label>
+        <label>
+          Confirmar contraseña
+          <input type="password" formControlName="password_confirm" autocomplete="new-password" />
+        </label>
+        <label>
+          Descripción / biografía
+          <textarea rows="3" formControlName="bio" placeholder="Cuéntanos algo sobre ti"></textarea>
+        </label>
+        <div class="photo">
+          <p>Foto de perfil</p>
+          <div class="preview">
+            @if (picturePreview()) {
+              <img [src]="picturePreview()" alt="Vista previa de la foto de perfil" />
+            } @else {
+              <span aria-hidden="true">{{ initial() }}</span>
+            }
+          </div>
+          <div class="gallery">
+            @for (avatar of presetAvatars; track avatar.style + avatar.seed) {
+              <button
+                type="button"
+                [class.selected]="selectedAvatar() === avatar.style + ':' + avatar.seed"
+                (click)="pickAvatar(avatar.style, avatar.seed)"
+                [attr.aria-label]="'Elegir avatar ' + avatar.seed"
+              >
+                <img [src]="avatarSrc(avatar.style, avatar.seed)" alt="" />
+              </button>
+            }
+          </div>
+          <label class="file">
+            O sube una foto desde tu computadora
+            <input type="file" accept="image/*" (change)="onAvatar($event)" />
+          </label>
+        </div>
+        @if (errorMessage()) {
+          <p class="error" role="alert">{{ errorMessage() }}</p>
+        }
+        <button type="submit" [disabled]="submitting()">Crear cuenta</button>
+      </form>
+    }
+  </article>
+</section>

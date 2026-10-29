@@ -1,0 +1,19 @@
+@if (open()) {
+  <div class="backdrop" (click)="cancel()">
+    <form class="dialog" (click)="$event.stopPropagation()" (submit)="confirm($event)">
+      <h2>{{ title() }}</h2>
+      <p>Este motivo se enviará al autor.</p>
+      <label>
+        Motivo del rechazo
+        <textarea rows="4" [value]="reason()" (input)="onReason($event)"></textarea>
+      </label>
+      @if (error()) {
+        <p class="error" role="alert">{{ error() }}</p>
+      }
+      <div class="actions">
+        <button type="submit">Enviar rechazo</button>
+        <button type="button" class="secondary" (click)="cancel()">Cancelar</button>
+      </div>
+    </form>
+  </div>
+}

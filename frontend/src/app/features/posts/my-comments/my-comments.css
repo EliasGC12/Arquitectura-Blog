@@ -1,0 +1,38 @@
+.intro {
+  color: var(--muted-color);
+}
+
+.list {
+  display: grid;
+  gap: 0.75rem;
+}
+
+article {
+  background: var(--surface-color);
+  border: 1px solid var(--line-color);
+  color: var(--text-color);
+  border-radius: 0.75rem;
+  padding: 1rem;
+}
+
+.content {
+  margin: 0 0 0.65rem;
+  white-space: pre-wrap;
+}
+
+.meta {
+  color: var(--muted-color);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin: 0;
+}
+
+.meta a {
+  color: var(--primary-color);
+  font-weight: 650;
+}
+
+.error {
+  color: #9b1c1c;
+}

@@ -1,0 +1,17 @@
+.rich {
+  line-height: 1.55;
+  overflow-wrap: anywhere;
+  white-space: pre-wrap;
+}
+
+:host ::ng-deep .rich :is(strong, b) {
+  font-weight: 700;
+}
+
+:host ::ng-deep .rich :is(em, i) {
+  font-style: italic;
+}
+
+.rich :is(p, h2, h3) {
+  margin: 0.4rem 0;
+}

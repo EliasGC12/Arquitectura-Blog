@@ -1,0 +1,57 @@
+<h1>Aprobación de usuarios</h1>
+<p class="intro">Revisa los registros nuevos, asigna un rol y decide si pueden entrar al blog.</p>
+
+@if (errorMessage()) {
+  <p class="error" role="alert">{{ errorMessage() }}</p>
+}
+@if (successMessage()) {
+  <p class="success" role="status">{{ successMessage() }}</p>
+}
+
+@if (users().length === 0) {
+  <p class="empty">No hay registros pendientes.</p>
+} @else {
+  <div class="list">
+    @for (user of users(); track user.id) {
+      <article class="card">
+        @if (user.profile_picture) {
+          <img class="avatar" [src]="user.profile_picture" alt="" />
+        } @else {
+          <span class="avatar">{{ initial(user.username) }}</span>
+        }
+        <div class="body">
+          <h2>{{ user.username }}</h2>
+          <p class="email">{{ user.email }}</p>
+          @if (user.bio) {
+            <p class="bio">{{ user.bio }}</p>
+          } @else {
+            <p class="bio muted">Sin biografía.</p>
+          }
+          <div class="tools">
+            <label>
+              Asignar rol
+              <select (change)="setRole(user.id, $event)">
+                @for (role of roles; track role.id) {
+                  <option [value]="role.id" [selected]="roleOf(user) === role.id">{{ role.label }}</option>
+                }
+              </select>
+            </label>
+            <div class="actions">
+              <button type="button" (click)="approve(user)" [disabled]="busyId() === user.id">
+                Aprobar
+              </button>
+              <button
+                type="button"
+                class="danger"
+                (click)="reject(user)"
+                [disabled]="busyId() === user.id"
+              >
+                Rechazar
+              </button>
+            </div>
+          </div>
+        </div>
+      </article>
+    }
+  </div>
+}

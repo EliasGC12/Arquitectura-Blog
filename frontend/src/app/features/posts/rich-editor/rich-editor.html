@@ -1,0 +1,36 @@
+<div class="editor">
+  <div class="tools" role="toolbar" aria-label="Formato del texto">
+    <label>
+      Fuente
+      <select #fontSelect (change)="onFont($event)">
+        @for (item of fonts; track item.label) {
+          <option [value]="item.label">{{ item.label }}</option>
+        }
+      </select>
+    </label>
+    <label>
+      Color
+      <input #colorInput type="color" (input)="onColor($event)" />
+    </label>
+    <button type="button" [class.active]="bold()" (click)="toggleBold()">
+      <strong>Negrita</strong>
+    </button>
+    <button type="button" [class.active]="italic()" (click)="toggleItalic()">
+      <em>Cursiva</em>
+    </button>
+  </div>
+  <textarea
+    #area
+    rows="5"
+    [attr.placeholder]="placeholder()"
+    [style.--editor-font]="fontCss()"
+    [style.--editor-color]="selectedColor()"
+    [style.--editor-weight]="bold() ? '700' : '400'"
+    [style.--editor-style]="italic() ? 'italic' : 'normal'"
+    [style.font-family]="fontCss()"
+    [style.color]="selectedColor()"
+    [style.font-weight]="bold() ? '700' : '400'"
+    [style.font-style]="italic() ? 'italic' : 'normal'"
+    (input)="onText($event)"
+  ></textarea>
+</div>

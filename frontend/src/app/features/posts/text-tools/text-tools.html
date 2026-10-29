@@ -1,0 +1,20 @@
+<div class="tools" role="toolbar" aria-label="Formato del texto">
+  <label>
+    Fuente
+    <select (change)="chooseFont($event)">
+      @for (item of fonts; track item.label) {
+        <option [value]="item.label">{{ item.label }}</option>
+      }
+    </select>
+  </label>
+  <label>
+    Color
+    <input type="color" value="#1c1e21" (change)="chooseColor($event)" />
+  </label>
+  <button type="button" (mousedown)="keepSelection($event)" (click)="mark('strong')">
+    <strong>Negrita</strong>
+  </button>
+  <button type="button" (mousedown)="keepSelection($event)" (click)="mark('em')">
+    <em>Cursiva</em>
+  </button>
+</div>

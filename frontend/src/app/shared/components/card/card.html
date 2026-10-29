@@ -1,0 +1,7 @@
+<article>
+  <h2>{{ title() }}</h2>
+  @if (content()) {
+    <p>{{ content() }}</p>
+  }
+  <ng-content />
+</article>
