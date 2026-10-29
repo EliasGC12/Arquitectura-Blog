@@ -3,6 +3,7 @@ import { Component, DestroyRef, inject, OnInit, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 import { Api } from '../../../core/services/api';
+import { MediaImage, MediaUrlPipe } from '../../../shared/media/media';
 
 interface PendingUser {
   id: number;
@@ -24,6 +25,7 @@ const ROLES = [
 ] as const;
 
 @Component({
+  imports: [MediaImage, MediaUrlPipe],
   selector: 'app-registros',
   styleUrl: './registros.css',
   templateUrl: './registros.html',

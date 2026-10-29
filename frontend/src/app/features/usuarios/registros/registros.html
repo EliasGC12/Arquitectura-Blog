@@ -15,7 +15,7 @@
     @for (user of users(); track user.id) {
       <article class="card">
         @if (user.profile_picture) {
-          <img class="avatar" [src]="user.profile_picture" alt="" />
+          <img appMedia class="avatar" [src]="user.profile_picture | mediaUrl" alt="" />
         } @else {
           <span class="avatar">{{ initial(user.username) }}</span>
         }

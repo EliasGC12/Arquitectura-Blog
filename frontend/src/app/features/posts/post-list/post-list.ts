@@ -25,6 +25,7 @@ import { TEXT_FONTS } from '../rich-text';
 import { StyledTitle } from '../styled-title/styled-title';
 import { timeAgo } from '../time-ago';
 import { RejectDialog } from '../../../shared/components/reject-dialog/reject-dialog';
+import { MediaImage, MediaUrlPipe } from '../../../shared/media/media';
 import { roleLabel } from '../../../shared/roles';
 
 type ComposerTab = 'estado' | 'foto' | 'enlace' | 'video';
@@ -45,6 +46,8 @@ interface PerfilUsuario {
     RejectDialog,
     StyledTitle,
     CommentThread,
+    MediaImage,
+    MediaUrlPipe,
   ],
   selector: 'app-post-list',
   styleUrl: './post-list.css',

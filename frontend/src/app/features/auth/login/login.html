@@ -64,7 +64,7 @@
           <p>Foto de perfil</p>
           <div class="preview">
             @if (picturePreview()) {
-              <img [src]="picturePreview()" alt="Vista previa de la foto de perfil" />
+              <img appMedia [src]="picturePreview() | mediaUrl" alt="Vista previa de la foto de perfil" />
             } @else {
               <span aria-hidden="true">{{ initial() }}</span>
             }
@@ -77,7 +77,7 @@
                 (click)="pickAvatar(avatar.style, avatar.seed)"
                 [attr.aria-label]="'Elegir avatar ' + avatar.seed"
               >
-                <img [src]="avatarSrc(avatar.style, avatar.seed)" alt="" />
+                <img appMedia [src]="avatarSrc(avatar.style, avatar.seed)" alt="" />
               </button>
             }
           </div>

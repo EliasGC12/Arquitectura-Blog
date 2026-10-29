@@ -4,6 +4,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 
+import { MediaImage, MediaUrlPipe } from '../../../shared/media/media';
 import { AuthService } from '../auth.service';
 
 const PRESET_AVATARS = [
@@ -22,7 +23,7 @@ const PRESET_AVATARS = [
 ] as const;
 
 @Component({
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, MediaImage, MediaUrlPipe],
   selector: 'app-login',
   styleUrl: './login.css',
   templateUrl: './login.html',

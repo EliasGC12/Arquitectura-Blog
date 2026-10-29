@@ -13,6 +13,7 @@ import { Category, Post, PostsService, Tag, toPostData } from '../posts.service'
 import { RichContent } from '../rich-content/rich-content';
 import { StyledTitle } from '../styled-title/styled-title';
 import { RichEditor } from '../rich-editor/rich-editor';
+import { MediaImage, MediaUrlPipe } from '../../../shared/media/media';
 import { RejectDialog } from '../../../shared/components/reject-dialog/reject-dialog';
 
 @Component({
@@ -27,6 +28,8 @@ import { RejectDialog } from '../../../shared/components/reject-dialog/reject-di
     RejectDialog,
     StyledTitle,
     Registros,
+    MediaImage,
+    MediaUrlPipe,
   ],
   selector: 'app-revision',
   styleUrl: './revision.css',

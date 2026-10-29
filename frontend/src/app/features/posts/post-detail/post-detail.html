@@ -8,7 +8,7 @@
   <article>
     <header class="post-head">
       @if (item.autor.profile_picture) {
-        <img class="avatar" [src]="item.autor.profile_picture" alt="" />
+        <img appMedia class="avatar" [src]="item.autor.profile_picture | mediaUrl" alt="" />
       } @else {
         <span class="avatar">{{ item.autor.username.charAt(0) }}</span>
       }

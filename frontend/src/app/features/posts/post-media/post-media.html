@@ -1,5 +1,5 @@
 @if (post().image) {
-  <img class="photo" [src]="post().image" [alt]="post().titulo" />
+  <img appMedia class="photo" [src]="post().image | mediaUrl" [alt]="post().titulo" />
 }
 
 @if (preview(); as media) {

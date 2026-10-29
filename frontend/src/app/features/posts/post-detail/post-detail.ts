@@ -13,6 +13,7 @@ import { RichContent } from '../rich-content/rich-content';
 import { StyledTitle } from '../styled-title/styled-title';
 import { timeAgo } from '../time-ago';
 import { RejectDialog } from '../../../shared/components/reject-dialog/reject-dialog';
+import { MediaImage, MediaUrlPipe } from '../../../shared/media/media';
 import { roleLabel } from '../../../shared/roles';
 
 interface PerfilUsuario {
@@ -21,7 +22,7 @@ interface PerfilUsuario {
 }
 
 @Component({
-  imports: [RouterLink, PostMedia, RichContent, RejectDialog, StyledTitle, CommentThread],
+  imports: [RouterLink, PostMedia, RichContent, RejectDialog, StyledTitle, CommentThread, MediaImage, MediaUrlPipe],
   selector: 'app-post-detail',
   styleUrl: './post-detail.css',
   templateUrl: './post-detail.html',

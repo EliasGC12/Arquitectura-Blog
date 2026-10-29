@@ -6,6 +6,7 @@ import { Router, RouterLink } from '@angular/router';
 
 import { TokenStorage } from '../../../core/services/token-storage';
 import { RejectDialog } from '../../../shared/components/reject-dialog/reject-dialog';
+import { MediaImage, MediaUrlPipe } from '../../../shared/media/media';
 import { roleLabel } from '../../../shared/roles';
 import { apiBase } from '../../../core/api-url';
 import { OwnedComment, CommentService } from '../../posts/comments.service';
@@ -44,7 +45,7 @@ const PRESET_AVATARS = [
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [ReactiveFormsModule, RouterLink, RichContent, RejectDialog, StyledTitle],
+  imports: [ReactiveFormsModule, RouterLink, RichContent, RejectDialog, StyledTitle, MediaImage, MediaUrlPipe],
   selector: 'app-perfil',
   styleUrl: './perfil.css',
   templateUrl: './perfil.html',

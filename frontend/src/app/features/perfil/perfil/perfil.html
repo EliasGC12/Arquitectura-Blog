@@ -10,7 +10,7 @@
   <section class="profile">
     <div class="cover" [style.background]="coverColor()">
       @if (shownCover(); as cover) {
-        <img [src]="cover" alt="Imagen de portada" />
+        <img appMedia [src]="cover | mediaUrl" alt="Imagen de portada" />
       }
       <div class="cover-tools">
         <label class="cover-btn">
@@ -25,7 +25,7 @@
 
     <div class="identity">
       @if (picturePreview()) {
-        <img class="avatar" [src]="picturePreview()" alt="Foto de perfil de {{ datos.username }}" />
+        <img appMedia class="avatar" [src]="picturePreview() | mediaUrl" alt="Foto de perfil de {{ datos.username }}" />
       } @else {
         <span class="avatar" aria-hidden="true">{{ initial() }}</span>
       }
@@ -58,7 +58,7 @@
             (click)="pickAvatar(avatar.style, avatar.seed)"
             [attr.aria-label]="'Usar avatar ' + avatar.seed"
           >
-            <img [src]="avatarSrc(avatar.style, avatar.seed)" alt="" />
+            <img appMedia [src]="avatarSrc(avatar.style, avatar.seed)" alt="" />
           </button>
         }
       </div>
@@ -162,7 +162,7 @@
             <li>
               <div class="notice-head">
                 @if (item.author.profile_picture) {
-                  <img class="mini" [src]="item.author.profile_picture" alt="" />
+                  <img appMedia class="mini" [src]="item.author.profile_picture | mediaUrl" alt="" />
                 } @else {
                   <span class="mini">{{ item.author.username.charAt(0) }}</span>
                 }

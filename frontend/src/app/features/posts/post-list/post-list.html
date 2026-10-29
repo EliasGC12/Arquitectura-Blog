@@ -5,7 +5,7 @@
     @if (!showForm()) {
       <button type="button" class="prompt" (click)="openCreate('estado')">
         @if (currentUser()?.profile_picture) {
-          <img class="avatar" [src]="currentUser()?.profile_picture" alt="" />
+          <img appMedia class="avatar" [src]="currentUser()?.profile_picture | mediaUrl" alt="" />
         } @else {
           <span class="avatar" aria-hidden="true">{{ initial(currentUser()?.username ?? '') }}</span>
         }
@@ -41,7 +41,7 @@
         </div>
         <div class="post-head">
           @if (currentUser()?.profile_picture) {
-            <img class="avatar" [src]="currentUser()?.profile_picture" alt="" />
+            <img appMedia class="avatar" [src]="currentUser()?.profile_picture | mediaUrl" alt="" />
           } @else {
             <span class="avatar" aria-hidden="true">{{ initial(currentUser()?.username ?? '') }}</span>
           }
@@ -113,7 +113,7 @@
             <p class="live-label">Vista previa en vivo</p>
             <header class="post-head">
               @if (currentUser()?.profile_picture) {
-                <img class="avatar" [src]="currentUser()?.profile_picture" alt="" />
+                <img appMedia class="avatar" [src]="currentUser()?.profile_picture | mediaUrl" alt="" />
               } @else {
                 <span class="avatar" aria-hidden="true">{{ initial(currentUser()?.username ?? '') }}</span>
               }
@@ -134,7 +134,7 @@
             />
             <app-rich-content [value]="liveContent()" />
             @if (imagePreview()) {
-              <img class="preview" [src]="imagePreview()" alt="" />
+              <img appMedia class="preview" [src]="imagePreview() | mediaUrl" alt="" />
             }
             @if (liveVideoPost(); as media) {
               <app-post-media [post]="media" />
@@ -155,7 +155,7 @@
             <input type="file" accept="image/*" (change)="onImage($event)" />
           </label>
           @if (imagePreview()) {
-            <img class="preview" [src]="imagePreview()" alt="Vista previa de la foto" />
+            <img appMedia class="preview" [src]="imagePreview() | mediaUrl" alt="Vista previa de la foto" />
           }
         }
         @if (composerTab() === 'enlace' || composerTab() === 'video') {
@@ -238,7 +238,7 @@
       <article class="post-card">
         <header class="post-head">
           @if (post.autor.profile_picture) {
-            <img class="avatar" [src]="post.autor.profile_picture" [alt]="''" />
+            <img appMedia class="avatar" [src]="post.autor.profile_picture | mediaUrl" [alt]="''" />
           } @else {
             <span class="avatar" aria-hidden="true">{{ initial(post.autor.username) }}</span>
           }

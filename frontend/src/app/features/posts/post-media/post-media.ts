@@ -1,10 +1,12 @@
 import { Component, computed, inject, input } from '@angular/core';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 
+import { MediaImage, MediaUrlPipe } from '../../../shared/media/media';
 import { linkPreview } from '../link-preview';
 import { Post } from '../posts.service';
 
 @Component({
+  imports: [MediaImage, MediaUrlPipe],
   selector: 'app-post-media',
   styleUrl: './post-media.css',
   templateUrl: './post-media.html',

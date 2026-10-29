@@ -3,6 +3,7 @@ import { NgTemplateOutlet } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, DestroyRef, inject, input, output, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
+import { MediaImage, MediaUrlPipe } from '../../../shared/media/media';
 import { roleLabel } from '../../../shared/roles';
 import { Comment, CommentService } from '../comments.service';
 import { timeAgo } from '../time-ago';
@@ -19,7 +20,7 @@ interface LikeState {
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [NgTemplateOutlet],
+  imports: [NgTemplateOutlet, MediaImage, MediaUrlPipe],
   selector: 'app-comment-thread',
   styleUrl: './comment-thread.css',
   templateUrl: './comment-thread.html',
