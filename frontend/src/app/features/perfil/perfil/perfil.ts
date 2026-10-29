@@ -7,7 +7,7 @@ import { Router, RouterLink } from '@angular/router';
 import { TokenStorage } from '../../../core/services/token-storage';
 import { RejectDialog } from '../../../shared/components/reject-dialog/reject-dialog';
 import { roleLabel } from '../../../shared/roles';
-import { environment } from '../../../../environments/environment';
+import { apiBase } from '../../../core/api-url';
 import { OwnedComment, CommentService } from '../../posts/comments.service';
 import { Post, PostsService } from '../../posts/posts.service';
 import { RichContent } from '../../posts/rich-content/rich-content';
@@ -103,7 +103,7 @@ export class Perfil implements OnInit, OnDestroy {
     }
 
     this.http
-      .get<PerfilUsuario>(`${environment.apiUrl}usuarios/perfil/`)
+      .get<PerfilUsuario>(`${apiBase()}usuarios/perfil/`)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (perfil) => {
@@ -373,7 +373,7 @@ export class Perfil implements OnInit, OnDestroy {
     this.successMessage.set('');
     this.submitting.set(true);
     this.http
-      .patch<PerfilUsuario>(`${environment.apiUrl}usuarios/perfil/`, data)
+      .patch<PerfilUsuario>(`${apiBase()}usuarios/perfil/`, data)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (perfil) => {

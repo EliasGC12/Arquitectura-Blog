@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { inject, Service } from '@angular/core';
 import { Observable } from 'rxjs';
 
-import { environment } from '../../../environments/environment';
+import { apiBase } from '../api-url';
 
 @Service()
 export class Api {
@@ -29,7 +29,6 @@ export class Api {
   }
 
   private url(path: string): string {
-    const base = environment.apiUrl.endsWith('/') ? environment.apiUrl : `${environment.apiUrl}/`;
-    return `${base}${path.replace(/^\//, '')}`;
+    return `${apiBase()}${path.replace(/^\//, '')}`;
   }
 }

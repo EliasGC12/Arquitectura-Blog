@@ -2,9 +2,10 @@ import { HttpClient } from '@angular/common/http';
 import { inject, Service } from '@angular/core';
 import { map, Observable, of, switchMap } from 'rxjs';
 
+import { apiBase } from '../../core/api-url';
 import { Comment } from './comments.service';
 
-const API_URL = 'http://127.0.0.1:8001/api/';
+const API_URL = apiBase();
 const POSTS_URL = `${API_URL}posts/`;
 
 export interface Category {

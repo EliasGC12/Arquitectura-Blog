@@ -2,8 +2,11 @@ import { HttpClient } from '@angular/common/http';
 import { inject, Service } from '@angular/core';
 import { map, Observable } from 'rxjs';
 
-const POSTS_URL = 'http://127.0.0.1:8001/api/posts/';
-const COMMENTS_URL = 'http://127.0.0.1:8001/api/comments/';
+import { apiBase } from '../../core/api-url';
+
+const API_URL = apiBase();
+const POSTS_URL = `${API_URL}posts/`;
+const COMMENTS_URL = `${API_URL}comments/`;
 
 export interface CommentAuthor {
   id: number;
