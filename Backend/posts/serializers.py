@@ -4,6 +4,7 @@ from django.db import IntegrityError, transaction
 from django.utils.text import slugify
 from rest_framework import serializers
 
+from blog_core.media_urls import PublicImageField, absolute_media_url
 from usuarios.models import Usuario
 
 from .models import Category, Comment, Notification, Post, Tag
@@ -35,12 +36,7 @@ def unique_slug(model, base, max_length):
 
 
 def media_url(file_field, request):
-    if not file_field:
-        return None
-    url = file_field.url
-    if request is None:
-        return url
-    return request.build_absolute_uri(url)
+    return absolute_media_url(file_field, request)
 
 
 def user_summary(user, request):
@@ -209,6 +205,7 @@ class OwnedCommentSerializer(CommentSerializer):
 
 
 class PostSerializer(serializers.ModelSerializer):
+    image = PublicImageField(required=False, allow_null=True)
     autor = serializers.SerializerMethodField()
     comments = serializers.SerializerMethodField()
     category = CategorySerializer(read_only=True)

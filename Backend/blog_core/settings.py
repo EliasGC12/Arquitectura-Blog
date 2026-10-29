@@ -160,7 +160,9 @@ WHITENOISE_USE_FINDERS = not ON_RENDER
 
 MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"
-SERVE_MEDIA = DEBUG or not os.environ.get("DATABASE_URL")
+PUBLIC_BASE_URL = os.environ.get("PUBLIC_BASE_URL", "").strip().rstrip("/")
+if not PUBLIC_BASE_URL and os.environ.get("FLY_APP_NAME"):
+    PUBLIC_BASE_URL = f"https://{os.environ['FLY_APP_NAME']}.fly.dev"
 
 
 # Email

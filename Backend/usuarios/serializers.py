@@ -6,11 +6,14 @@ from rest_framework import serializers
 from rest_framework.exceptions import AuthenticationFailed
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
+from blog_core.media_urls import PublicImageField
+
 from .avatars import dicebear_file
 from .models import Usuario
 
 
 class UserRegistrationSerializer(serializers.ModelSerializer):
+    profile_picture = PublicImageField(required=False, allow_null=True)
     password = serializers.CharField(
         write_only=True,
         required=True,
@@ -62,6 +65,9 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
 
 
 class UserSerializer(serializers.ModelSerializer):
+    profile_picture = PublicImageField(required=False, allow_null=True)
+    cover_image = PublicImageField(required=False, allow_null=True)
+
     class Meta:
         model = Usuario
         fields = (
@@ -108,6 +114,8 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class PendingUserSerializer(serializers.ModelSerializer):
+    profile_picture = PublicImageField(read_only=True)
+
     class Meta:
         model = Usuario
         fields = (
