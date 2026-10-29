@@ -5,6 +5,8 @@ import { catchError, map, of } from 'rxjs';
 import { Api } from '../services/api';
 import { TokenStorage } from '../services/token-storage';
 
+const APPROVAL_ROLES = ['SUPERVISOR', 'ADMIN'];
+
 export const adminGuard: CanActivateFn = () => {
   const router = inject(Router);
   if (!inject(TokenStorage).getValidAccessToken()) {
@@ -14,7 +16,9 @@ export const adminGuard: CanActivateFn = () => {
   return inject(Api)
     .get<{ rol: string }>('usuarios/perfil/')
     .pipe(
-      map((perfil) => (perfil.rol === 'ADMIN' ? true : router.createUrlTree(['/posts']))),
+      map((perfil) =>
+        APPROVAL_ROLES.includes(perfil.rol) ? true : router.createUrlTree(['/posts']),
+      ),
       catchError(() => of(router.createUrlTree(['/auth']))),
     );
 };

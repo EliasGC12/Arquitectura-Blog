@@ -32,7 +32,7 @@ export class Registros implements OnInit {
   private readonly api = inject(Api);
   private readonly destroyRef = inject(DestroyRef);
 
-  protected readonly roles = ROLES;
+  protected readonly roles = signal<readonly { id: string; label: string }[]>([...ROLES]);
   protected readonly users = signal<PendingUser[]>([]);
   protected readonly rolesById = signal<Record<number, string>>({});
   protected readonly busyId = signal<number | null>(null);
@@ -40,6 +40,14 @@ export class Registros implements OnInit {
   protected readonly successMessage = signal('');
 
   ngOnInit(): void {
+    this.api
+      .get<{ rol: string }>('usuarios/perfil/')
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((perfil) => {
+        this.roles.set(
+          perfil.rol === 'ADMIN' ? [...ROLES] : ROLES.filter((role) => role.id !== 'ADMIN'),
+        );
+      });
     this.load();
   }
 
@@ -104,10 +112,11 @@ export class Registros implements OnInit {
 
   private load(): void {
     this.api
-      .get<PendingUser[]>('usuarios/pendientes/')
+      .get<PendingUser[] | { results: PendingUser[] }>('usuarios/pendientes/')
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
-        next: (users) => {
+        next: (data) => {
+          const users = Array.isArray(data) ? data : (data.results ?? []);
           this.users.set(users);
           this.rolesById.set(Object.fromEntries(users.map((user) => [user.id, user.rol || 'LECTOR'])));
         },

@@ -31,7 +31,7 @@
             <label>
               Asignar rol
               <select (change)="setRole(user.id, $event)">
-                @for (role of roles; track role.id) {
+                @for (role of roles(); track role.id) {
                   <option [value]="role.id" [selected]="roleOf(user) === role.id">{{ role.label }}</option>
                 }
               </select>

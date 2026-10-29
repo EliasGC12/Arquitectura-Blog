@@ -138,7 +138,7 @@ export class Navbar implements OnInit {
       .subscribe({
         next: (perfil) => {
           this.canReview.set(MODERATOR_ROLES.includes(perfil.rol));
-          this.canManageUsers.set(perfil.rol === 'ADMIN');
+          this.canManageUsers.set(perfil.rol === 'ADMIN' || perfil.rol === 'SUPERVISOR');
           this.canSeeOwnComments.set(AUTHOR_ROLES.includes(perfil.rol));
         },
         error: () => {

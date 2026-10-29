@@ -5,6 +5,8 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 
+import { Api } from '../../../core/services/api';
+import { Registros } from '../../usuarios/registros/registros';
 import { OwnedComment, CommentService } from '../comments.service';
 import { PostMedia } from '../post-media/post-media';
 import { Category, Post, PostsService, Tag, toPostData } from '../posts.service';
@@ -15,12 +17,23 @@ import { RejectDialog } from '../../../shared/components/reject-dialog/reject-di
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [ReactiveFormsModule, DatePipe, RouterLink, PostMedia, RichEditor, RichContent, RejectDialog, StyledTitle],
+  imports: [
+    ReactiveFormsModule,
+    DatePipe,
+    RouterLink,
+    PostMedia,
+    RichEditor,
+    RichContent,
+    RejectDialog,
+    StyledTitle,
+    Registros,
+  ],
   selector: 'app-revision',
   styleUrl: './revision.css',
   templateUrl: './revision.html',
 })
 export class Revision implements OnInit, OnDestroy {
+  private readonly api = inject(Api);
   private readonly postsService = inject(PostsService);
   private readonly commentService = inject(CommentService);
   private readonly formBuilder = inject(FormBuilder);
@@ -36,6 +49,7 @@ export class Revision implements OnInit, OnDestroy {
   protected readonly previousPage = signal<string | null>(null);
   protected readonly imagePreview = signal<string | null>(null);
   protected readonly pendingComments = signal<OwnedComment[]>([]);
+  protected readonly canApproveUsers = signal(false);
   protected readonly moderatingCommentId = signal<number | null>(null);
   protected readonly rejectRequest = signal<
     { kind: 'post'; post: Post } | { kind: 'comment'; comment: OwnedComment } | null
@@ -71,6 +85,12 @@ export class Revision implements OnInit, OnDestroy {
     this.loadTaxonomy();
     this.loadPosts();
     this.loadPendingComments();
+    this.api
+      .get<{ rol: string }>('usuarios/perfil/')
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((perfil) => {
+        this.canApproveUsers.set(perfil.rol === 'ADMIN' || perfil.rol === 'SUPERVISOR');
+      });
   }
 
   protected startEdit(post: Post): void {

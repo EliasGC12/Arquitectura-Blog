@@ -1,6 +1,10 @@
 <h1>Revisión</h1>
 <p class="intro">Publicaciones pendientes de revisión.</p>
 
+@if (canApproveUsers()) {
+  <app-registros />
+}
+
 @if (editingId()) {
   <form [formGroup]="form" (ngSubmit)="save()">
     <h2>Editar publicación</h2>
