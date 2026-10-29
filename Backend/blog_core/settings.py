@@ -48,6 +48,7 @@ ALLOWED_HOSTS = [
     "127.0.0.1",
     ".onrender.com",
     *_csv(os.environ.get("ALLOWED_HOSTS", "")),
+    'arquitectura-blog-fcc.fly.dev', 'localhost', '127.0.0.1'
 ]
 
 
