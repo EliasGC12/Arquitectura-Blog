@@ -292,6 +292,38 @@ export class PostList implements OnInit, OnDestroy {
     });
   }
 
+  protected archive(post: Post): void {
+    if (this.submitting()) {
+      return;
+    }
+
+    const confirmed = window.confirm(
+      `¿Archivar la publicación «${post.titulo}»? Dejará de verse en Explorar.`,
+    );
+    if (!confirmed) {
+      return;
+    }
+
+    this.errorMessage.set('');
+    this.submitting.set(true);
+    this.postsService
+      .archivePost(post.id)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: () => {
+          this.submitting.set(false);
+          if (this.editingId() === post.id) {
+            this.cancel();
+          }
+          this.posts.update((items) => items.filter((item) => item.id !== post.id));
+        },
+        error: (error: HttpErrorResponse) => {
+          this.submitting.set(false);
+          this.errorMessage.set(this.readError(error, 'archivar'));
+        },
+      });
+  }
+
   protected remove(post: Post): void {
     if (this.submitting()) {
       return;
@@ -674,7 +706,10 @@ export class PostList implements OnInit, OnDestroy {
       });
   }
 
-  private readError(error: HttpErrorResponse, action: 'crear' | 'guardar' | 'eliminar'): string {
+  private readError(
+    error: HttpErrorResponse,
+    action: 'crear' | 'guardar' | 'eliminar' | 'archivar',
+  ): string {
     if (error.status === 401) {
       return 'Inicia sesión para continuar.';
     }
@@ -690,6 +725,9 @@ export class PostList implements OnInit, OnDestroy {
     }
     if (action === 'eliminar') {
       return 'No se pudo eliminar la publicación.';
+    }
+    if (action === 'archivar') {
+      return 'No se pudo archivar la publicación.';
     }
     if (action === 'guardar') {
       return 'No se pudo guardar la publicación.';

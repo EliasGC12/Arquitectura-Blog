@@ -14,6 +14,10 @@ export class TokenStorage {
     return this.read(ACCESS_TOKEN_KEY);
   }
 
+  getRefreshToken(): string | null {
+    return this.read(REFRESH_TOKEN_KEY);
+  }
+
   getValidAccessToken(): string | null {
     const token = this.getAccessToken();
     if (!token) {

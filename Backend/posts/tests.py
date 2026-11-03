@@ -1,7 +1,7 @@
 from django.contrib.auth import get_user_model
 from rest_framework.test import APITestCase
 
-from posts.models import Category, Post, Tag
+from posts.models import Category, Comment, Post, Tag
 
 User = get_user_model()
 
@@ -137,6 +137,74 @@ class PostCmsTests(APITestCase):
         self.assertTrue(any(item["content"] == "Quiero ver la lámina" for item in pending.data))
         self.assertEqual(approved.status_code, 200)
         self.assertEqual(contents, ["Quiero ver la lámina", "Nota editorial"])
+
+    def test_la_bandeja_oculta_comentarios_sin_aprobar_al_autor(self):
+        Comment.objects.create(
+            post=self.publicado,
+            author=self.lector,
+            content="Aún no",
+            is_approved=False,
+        )
+        Comment.objects.create(
+            post=self.publicado,
+            author=self.editor,
+            content="Ya visible",
+            is_approved=True,
+        )
+        editorial = Post.objects.create(
+            titulo="Del editor",
+            contenido="Texto del artículo",
+            autor=self.editor,
+            estado=Post.Estado.PUBLICADO,
+        )
+        Comment.objects.create(
+            post=editorial,
+            author=self.lector,
+            content="Pendiente del editor",
+            is_approved=False,
+        )
+
+        self.client.force_authenticate(self.autor)
+        inbox = self.client.get("/api/comments/inbox/")
+        self.client.force_authenticate(self.lector)
+        own = self.client.get("/api/comments/inbox/")
+        self.client.force_authenticate(self.editor)
+        moderated = self.client.get("/api/comments/inbox/")
+
+        self.assertEqual(inbox.status_code, 200)
+        self.assertEqual([item["content"] for item in inbox.data], ["Ya visible"])
+        self.assertCountEqual(
+            [item["content"] for item in own.data],
+            ["Aún no", "Pendiente del editor"],
+        )
+        self.assertIn("Pendiente del editor", [item["content"] for item in moderated.data])
+
+    def test_un_editor_archiva_un_publicado_sin_poder_editarlo(self):
+        self.client.force_authenticate(self.autor)
+        denied = self.client.post(f"/api/posts/{self.publicado.id}/archive/", {}, format="json")
+        untouched = self.client.patch(
+            f"/api/posts/{self.otro.id}/",
+            {"estado": Post.Estado.ARCHIVADO},
+            format="json",
+        )
+
+        self.client.force_authenticate(self.editor)
+        blocked = self.client.patch(
+            f"/api/posts/{self.publicado.id}/",
+            {"titulo": "Cambio ajeno"},
+            format="json",
+        )
+        archived = self.client.post(f"/api/posts/{self.publicado.id}/archive/", {}, format="json")
+        public = self.client.get("/api/posts/")
+
+        self.otro.refresh_from_db()
+        self.assertEqual(denied.status_code, 403)
+        self.assertEqual(untouched.status_code, 400)
+        self.assertEqual(self.otro.estado, Post.Estado.PUBLICADO)
+        self.assertEqual(blocked.status_code, 403)
+        self.assertEqual(archived.status_code, 200)
+        self.assertEqual(archived.data["estado"], Post.Estado.ARCHIVADO)
+        self.assertNotIn("Fachada norte", [item["titulo"] for item in public.data["results"]])
 
     def _user(self, username, rol):
         return User.objects.create_user(

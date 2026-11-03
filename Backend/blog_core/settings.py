@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/6.1/ref/settings/
 """
 
 import os
+from datetime import timedelta
 from pathlib import Path
 
 import dj_database_url
@@ -204,6 +205,7 @@ if ON_RENDER:
     SECURE_CONTENT_TYPE_NOSNIFF = True
 
 SIMPLE_JWT = {
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=30),
     "USER_AUTHENTICATION_RULE": "usuarios.authentication.account_can_authenticate",
 }
 

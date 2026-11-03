@@ -88,8 +88,13 @@ class PostPermission(BasePermission):
             return obj.estado == Post.Estado.PUBLICADO or self._can_see_unpublished(request.user, obj)
 
         action = getattr(view, "action", None)
-        if action in {"approve", "reject"}:
-            return is_moderator(request.user)
+        if action in {"approve", "reject", "archive"}:
+            if is_moderator(request.user):
+                return True
+            self.message = (
+                "Solo un supervisor, editor o administrador puede publicar, rechazar o archivar."
+            )
+            return False
 
         if request.method in {"PUT", "PATCH"}:
             return self._is_owner(request.user, obj)

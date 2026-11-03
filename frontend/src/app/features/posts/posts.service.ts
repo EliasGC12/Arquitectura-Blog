@@ -237,6 +237,10 @@ export class PostsService {
     return this.http.post<Post>(`${POSTS_URL}${id}/reject/`, { message });
   }
 
+  archivePost(id: number): Observable<Post> {
+    return this.http.post<Post>(`${POSTS_URL}${id}/archive/`, {});
+  }
+
   deletePost(id: number): Observable<void> {
     return this.http.delete<void>(`${POSTS_URL}${id}/`);
   }

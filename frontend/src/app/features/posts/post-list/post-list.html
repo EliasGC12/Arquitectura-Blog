@@ -338,6 +338,9 @@
             @if (isAuthor(post)) {
               <button type="button" (click)="startEdit(post)">Editar</button>
             }
+            @if (canModerate() && post.estado !== 'ARCHIVADO') {
+              <button type="button" (click)="archive(post)" [disabled]="submitting()">Archivar</button>
+            }
             @if (canManage(post)) {
               <button type="button" (click)="remove(post)" [disabled]="submitting()">Eliminar</button>
             }

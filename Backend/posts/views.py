@@ -148,6 +148,20 @@ class PostViewSet(viewsets.ModelViewSet):
         )
         return Response(self.get_serializer(post).data)
 
+    @action(detail=True, methods=["post"], url_path="archive")
+    def archive(self, request, pk=None):
+        post = self.get_object()
+        post.estado = Post.Estado.ARCHIVADO
+        post.save(update_fields=["estado", "fecha_actualizacion"])
+        push_notification(
+            recipient=post.autor,
+            sender=request.user,
+            notification_type=Notification.Type.POST_REJECTED,
+            message=f"Tu publicación «{post.titulo}» fue archivada.",
+            related_post=post,
+        )
+        return Response(self.get_serializer(post).data)
+
     def _feedback(self, request):
         message = request.data.get("message", "")
         if not isinstance(message, str):
@@ -193,12 +207,15 @@ class CommentInboxView(generics.ListAPIView):
         base = Comment.objects.select_related("author", "post", "parent__author")
         if getattr(user, "rol", None) == Usuario.Rol.LECTOR:
             return base.filter(author=user).prefetch_related("likes").order_by("-created_at")
-        return (
+        queryset = (
             base.filter(post__autor=user)
             .exclude(author=user)
             .prefetch_related("likes")
             .order_by("-created_at")
         )
+        if not is_moderator(user):
+            queryset = queryset.filter(is_approved=True)
+        return queryset
 
 
 class CommentViewSet(viewsets.ModelViewSet):
