@@ -12,16 +12,40 @@
         <span class="who">
           <span class="name-line">
             <strong>{{ currentUser()?.username }}</strong>
-            <span class="role">{{ roleLabel(currentUser()?.rol) }}</span>
+            <span class="role" [attr.data-role]="currentUser()?.rol">{{ roleLabel(currentUser()?.rol) }}</span>
           </span>
-          <span>Escribir algo...</span>
+          <span class="placeholder">¿Qué está pasando en el campus?</span>
         </span>
       </button>
       <div class="quick" role="group" aria-label="Adjuntar">
-        <button type="button" (click)="openCreate('estado')">Estado</button>
-        <button type="button" (click)="openCreate('foto')">Foto</button>
-        <button type="button" (click)="openCreate('enlace')">Enlace</button>
-        <button type="button" (click)="openCreate('video')">Video</button>
+        <button type="button" (click)="openCreate('estado')">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M5 6.5h14a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-9a1 1 0 0 1 1-1z" />
+          </svg>
+          <span>Estado</span>
+        </button>
+        <button type="button" (click)="openCreate('foto')">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <rect x="4" y="5" width="16" height="14" rx="2" />
+            <circle cx="9" cy="10" r="1.4" />
+            <path d="m8 16 3.2-3.2 2.2 2.1L16.5 12 20 15.2" />
+          </svg>
+          <span>Foto</span>
+        </button>
+        <button type="button" (click)="openCreate('enlace')">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M10 13a5 5 0 0 0 7.1.1l1.4-1.4a5 5 0 0 0-7.1-7.1L10 6" />
+            <path d="M14 11a5 5 0 0 0-7.1-.1L5.5 12.3a5 5 0 0 0 7.1 7.1L14 18" />
+          </svg>
+          <span>Enlace</span>
+        </button>
+        <button type="button" (click)="openCreate('video')">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <rect x="3.5" y="6" width="12" height="12" rx="2" />
+            <path d="m15.5 10 5-2.5v9L15.5 14" />
+          </svg>
+          <span>Video</span>
+        </button>
       </div>
     } @else {
       <form [formGroup]="form" (ngSubmit)="save()">
@@ -48,7 +72,7 @@
           <div>
             <p class="name-line">
               <strong>{{ currentUser()?.username }}</strong>
-              <span class="role">{{ roleLabel(currentUser()?.rol) }}</span>
+              <span class="role" [attr.data-role]="currentUser()?.rol">{{ roleLabel(currentUser()?.rol) }}</span>
             </p>
           </div>
         </div>
@@ -99,6 +123,7 @@
         <div class="field">
           <span>Contenido</span>
           <app-rich-editor
+            placeholder="¿Qué está pasando en el campus?"
             [value]="form.controls.contenido.value"
             [resetKey]="editingId() ?? 'nuevo'"
             (valueChange)="onRich($event)"
@@ -120,7 +145,7 @@
               <div>
                 <p class="name-line">
                   <strong>{{ currentUser()?.username }}</strong>
-                  <span class="role">{{ roleLabel(currentUser()?.rol) }}</span>
+                  <span class="role" [attr.data-role]="currentUser()?.rol">{{ roleLabel(currentUser()?.rol) }}</span>
                 </p>
                 <time>ahora mismo</time>
               </div>
@@ -176,42 +201,39 @@
             </span>
           </label>
         }
-        <details>
-          <summary>Detalles</summary>
-          <label>
-            Categoría
-            <select formControlName="category_id">
-              <option [ngValue]="null">Sin categoría</option>
-              @for (category of categories(); track category.id) {
-                <option [ngValue]="category.id">{{ category.nombre }}</option>
-              }
-            </select>
-          </label>
-          <label>
-            Nueva categoría
-            <input type="text" formControlName="category_name" placeholder="Si no está en la lista" />
-          </label>
-          <label>
-            Etiquetas
-            <select formControlName="tag_ids" multiple>
-              @for (tag of tags(); track tag.id) {
-                <option [ngValue]="tag.id">{{ tag.nombre }}</option>
-              }
-            </select>
-          </label>
-          <label>
-            Nuevas etiquetas
-            <input type="text" formControlName="tag_names" placeholder="Separa varias con comas" />
-          </label>
-          <label>
-            Estado
-            <select formControlName="estado">
-              @for (estado of estadosDisponibles(); track estado) {
-                <option [value]="estado">{{ estado }}</option>
-              }
-            </select>
-          </label>
-        </details>
+        <label>
+          Categoría
+          <select formControlName="category_id">
+            <option [ngValue]="null">Sin categoría</option>
+            @for (category of categories(); track category.id) {
+              <option [ngValue]="category.id">{{ category.nombre }}</option>
+            }
+          </select>
+        </label>
+        <label>
+          Nueva categoría
+          <input type="text" formControlName="category_name" placeholder="Si no está en la lista" />
+        </label>
+        <label>
+          Etiquetas
+          <select formControlName="tag_ids" multiple>
+            @for (tag of tags(); track tag.id) {
+              <option [ngValue]="tag.id">{{ tag.nombre }}</option>
+            }
+          </select>
+        </label>
+        <label>
+          Nuevas etiquetas
+          <input type="text" formControlName="tag_names" placeholder="Separa varias con comas" />
+        </label>
+        <label>
+          Estado
+          <select formControlName="estado">
+            @for (estado of estadosDisponibles(); track estado) {
+              <option [value]="estado">{{ estado }}</option>
+            }
+          </select>
+        </label>
         <button type="button" class="preview-toggle" (click)="showLivePreview.set(!showLivePreview())">
           {{ showLivePreview() ? '👁️ Ocultar Vista Previa' : '👁️ Mostrar Vista Previa' }}
         </button>
@@ -226,12 +248,52 @@
   </section>
 }
 
+<section class="filters" aria-label="Filtrar artículos">
+  <div class="filter-row">
+    <span id="filter-category">Categoría</span>
+    <div role="group" aria-labelledby="filter-category">
+      <button type="button" [class.active]="!filtersActive()" (click)="clearFilters()">Todos</button>
+      @for (category of categories(); track category.id) {
+        <button
+          type="button"
+          [class.active]="categoryFilter() === category.slug"
+          [attr.aria-pressed]="categoryFilter() === category.slug"
+          (click)="selectCategory(category.slug)"
+        >
+          {{ category.nombre }}
+        </button>
+      }
+    </div>
+  </div>
+  <div class="filter-row">
+    <span id="filter-tag">Etiqueta</span>
+    <div role="group" aria-labelledby="filter-tag">
+      @for (tag of tags(); track tag.id) {
+        <button
+          type="button"
+          [class.active]="tagFilter() === tag.slug"
+          [attr.aria-pressed]="tagFilter() === tag.slug"
+          (click)="selectTag(tag.slug)"
+        >
+          #{{ tag.nombre }}
+        </button>
+      }
+    </div>
+  </div>
+</section>
+
 @if (errorMessage()) {
   <p class="error" role="alert">{{ errorMessage() }}</p>
 }
 
 @if (posts().length === 0) {
-  <p class="empty">El muro está en calma. Todavía no hay publicaciones.</p>
+  <p class="empty">
+    @if (filtersActive()) {
+      No hay artículos con ese filtro.
+    } @else {
+      El muro está en calma. Todavía no hay publicaciones.
+    }
+  </p>
 } @else {
   <section class="feed">
     @for (post of posts(); track post.id) {
@@ -245,7 +307,7 @@
           <div>
             <p class="name-line">
               <strong>{{ post.autor.username }}</strong>
-              <span class="role">{{ roleLabel(post.autor.rol) }}</span>
+              <span class="role" [attr.data-role]="post.autor.rol">{{ roleLabel(post.autor.rol) }}</span>
             </p>
             <time [attr.datetime]="post.fecha_creacion">{{ timeAgo(post.fecha_creacion) }}</time>
           </div>

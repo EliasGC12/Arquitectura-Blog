@@ -34,5 +34,5 @@ article {
 }
 
 .error {
-  color: #9b1c1c;
+  color: var(--danger);
 }

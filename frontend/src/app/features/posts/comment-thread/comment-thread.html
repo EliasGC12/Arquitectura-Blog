@@ -15,7 +15,7 @@
               <p class="name-line">
                 <strong>{{ item.comment.author.username }}</strong>
                 @if (roleLabel(item.comment.author.rol)) {
-                  <span class="role">{{ roleLabel(item.comment.author.rol) }}</span>
+                  <span class="role" [attr.data-role]="item.comment.author.rol">{{ roleLabel(item.comment.author.rol) }}</span>
                 }
               </p>
               <p class="text">{{ item.comment.content }}</p>

@@ -60,12 +60,6 @@
   color: var(--text-color);
 }
 
-.role {
-  color: var(--primary-color);
-  font-size: 0.78rem;
-  font-weight: 700;
-}
-
 .text {
   overflow-wrap: anywhere;
   white-space: pre-wrap;
@@ -90,7 +84,7 @@
 .moderation button {
   align-items: center;
   background: var(--surface-color);
-  border: 1px solid var(--line-color);
+  border: 1px solid var(--control-border);
   border-radius: 999px;
   color: var(--muted-color);
   cursor: pointer;
@@ -116,14 +110,14 @@
 .moderation button:hover {
   background: var(--accent-soft);
   border-color: var(--primary-color);
-  color: var(--primary-color);
+  color: var(--accent-ink);
   transform: translateY(-1px);
 }
 
 .like.active {
   background: var(--accent-soft);
   border-color: var(--primary-color);
-  color: var(--primary-color);
+  color: var(--accent-ink);
 }
 
 .like.active svg {
@@ -139,7 +133,7 @@
 }
 
 .pending {
-  color: #9a6700;
+  color: var(--warning);
 }
 
 .reply {
@@ -148,7 +142,7 @@
 
 .reply textarea {
   background: var(--surface-color);
-  border: 1px solid var(--line-color);
+  border: 1px solid var(--control-border);
   border-radius: 0.85rem;
   color: var(--text-color);
   flex: 1 1 12rem;
@@ -167,5 +161,5 @@
 
 .moderation button {
   background: var(--accent-soft);
-  color: var(--primary-color);
+  color: var(--accent-ink);
 }

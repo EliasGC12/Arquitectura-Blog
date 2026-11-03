@@ -25,8 +25,8 @@
 }
 
 .link-card {
-  background: #f0f2f5;
-  border: 1px solid #dddfe2;
+  background: var(--bubble-color);
+  border: 1px solid var(--line-color);
   border-radius: 0.75rem;
   color: inherit;
   display: grid;
@@ -36,7 +36,7 @@
 }
 
 .link-card span {
-  color: #65676b;
+  color: var(--muted-color);
   font-size: 0.78rem;
   letter-spacing: 0.03em;
   text-transform: uppercase;

@@ -31,7 +31,7 @@
       }
       <div class="person">
         <h1>{{ datos.username }}</h1>
-        <p class="role">{{ roleLabel(datos.rol) }}</p>
+        <p class="role" [attr.data-role]="datos.rol">{{ roleLabel(datos.rol) }}</p>
         <p class="email">{{ datos.email }}</p>
         @if (datos.bio) {
           <p class="bio">{{ datos.bio }}</p>

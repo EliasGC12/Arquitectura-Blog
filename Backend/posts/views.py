@@ -84,7 +84,7 @@ class PostViewSet(viewsets.ModelViewSet):
             return queryset.filter(estado=status)
 
         if self.action == "list":
-            return queryset.filter(estado=Post.Estado.PUBLICADO)
+            return self._apply_taxonomy(queryset.filter(estado=Post.Estado.PUBLICADO))
 
         if is_moderator(user):
             return queryset
@@ -100,6 +100,24 @@ class PostViewSet(viewsets.ModelViewSet):
     def _mine_requested(self):
         value = (self.request.query_params.get("mine") or "").strip().lower()
         return value in {"1", "true", "yes"}
+
+    def _apply_taxonomy(self, queryset):
+        category = (self.request.query_params.get("category") or "").strip()
+        if category:
+            if category.isdigit():
+                queryset = queryset.filter(category_id=int(category))
+            else:
+                queryset = queryset.filter(category__slug=category)
+
+        tags = [item.strip() for item in self.request.query_params.getlist("tag") if item.strip()]
+        for tag in tags:
+            if tag.isdigit():
+                queryset = queryset.filter(tags__id=int(tag))
+            else:
+                queryset = queryset.filter(tags__slug=tag)
+        if tags:
+            queryset = queryset.distinct()
+        return queryset
 
     @action(detail=True, methods=["post"], url_path="approve")
     def approve(self, request, pk=None):
@@ -198,6 +216,8 @@ class CommentViewSet(viewsets.ModelViewSet):
         user = self.request.user
         if is_moderator(user):
             return queryset
+        if user.is_authenticated:
+            return queryset.filter(Q(is_approved=True) | Q(author=user))
         return queryset.filter(is_approved=True)
 
     def perform_create(self, serializer):
@@ -211,7 +231,7 @@ class CommentViewSet(viewsets.ModelViewSet):
         comment = serializer.save(
             author=user,
             post=post,
-            is_approved=True,
+            is_approved=is_moderator(user),
         )
         self._notify_new_comment(user, post, comment)
 

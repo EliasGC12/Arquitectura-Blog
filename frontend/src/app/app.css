@@ -4,11 +4,29 @@
   min-height: 100dvh;
 }
 
+.skip {
+  background: var(--primary-color);
+  border-radius: 0.6rem;
+  color: var(--primary-contrast);
+  font-weight: 700;
+  left: 0.75rem;
+  padding: 0.55rem 0.8rem;
+  position: absolute;
+  text-decoration: none;
+  top: 0.75rem;
+  transform: translateY(-160%);
+  z-index: 50;
+}
+
+.skip:focus {
+  transform: none;
+}
+
 main {
   box-sizing: border-box;
   flex: 1;
   margin: 0 auto;
   max-width: 1200px;
-  padding: 1.25rem 0 6.5rem;
+  padding: calc(var(--header-offset) + 1.15rem) 0 6.5rem;
   width: min(1200px, 92%);
 }

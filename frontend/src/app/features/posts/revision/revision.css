@@ -61,7 +61,7 @@ label,
 input,
 textarea,
 select {
-  border: 1px solid var(--line-color);
+  border: 1px solid var(--control-border);
   border-radius: 0.5rem;
   font: inherit;
   padding: 0.6rem 0.75rem;
@@ -132,7 +132,7 @@ article h2 a {
 }
 
 .error {
-  color: #9b1c1c;
+  color: var(--danger);
 }
 
 button:disabled {

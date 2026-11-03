@@ -1,11 +1,12 @@
-import { Component, DestroyRef, inject, OnInit, signal } from '@angular/core';
+import { DOCUMENT, isPlatformBrowser } from '@angular/common';
+import { Component, DestroyRef, inject, OnInit, PLATFORM_ID, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { NavigationEnd, Router, RouterLink, RouterLinkActive } from '@angular/router';
-import { filter } from 'rxjs';
+import { filter, fromEvent } from 'rxjs';
 
 import { Api } from '../../../core/services/api';
 import { AppNotification, NotificationsService } from '../../../core/services/notifications';
-import { ThemeId, THEMES, ThemeService } from '../../../core/services/theme';
+import { ACCENTS, ThemeService } from '../../../core/services/theme';
 import { TokenStorage } from '../../../core/services/token-storage';
 import { timeAgo } from '../../../features/posts/time-ago';
 
@@ -22,8 +23,10 @@ export class Navbar implements OnInit {
   private readonly api = inject(Api);
   private readonly notifications = inject(NotificationsService);
   private readonly tokenStorage = inject(TokenStorage);
+  private readonly document = inject(DOCUMENT);
+  private readonly platformId = inject(PLATFORM_ID);
   protected readonly theme = inject(ThemeService);
-  protected readonly themes = THEMES;
+  protected readonly accents = ACCENTS;
   private readonly router = inject(Router);
   private readonly destroyRef = inject(DestroyRef);
   private loadedToken: string | null = null;
@@ -52,6 +55,47 @@ export class Navbar implements OnInit {
       });
     this.refreshRole();
     this.loadNotifications();
+    if (isPlatformBrowser(this.platformId)) {
+      fromEvent<KeyboardEvent>(this.document, 'keydown')
+        .pipe(
+          filter((event) => event.key === 'Escape'),
+          takeUntilDestroyed(this.destroyRef),
+        )
+        .subscribe(() => {
+          this.menuOpen.set(false);
+          this.bellOpen.set(false);
+        });
+    }
+  }
+
+  protected toggleMode(): void {
+    this.theme.toggleMode();
+  }
+
+  protected moveAccent(event: KeyboardEvent): void {
+    const keys = ['ArrowRight', 'ArrowDown', 'ArrowLeft', 'ArrowUp', 'Home', 'End'];
+    if (!keys.includes(event.key)) {
+      return;
+    }
+    event.preventDefault();
+    const ids = this.accents.map((item) => item.id);
+    const index = Math.max(0, ids.indexOf(this.theme.accent()));
+    let next = index;
+    if (event.key === 'Home') {
+      next = 0;
+    } else if (event.key === 'End') {
+      next = ids.length - 1;
+    } else if (event.key === 'ArrowRight' || event.key === 'ArrowDown') {
+      next = (index + 1) % ids.length;
+    } else {
+      next = (index - 1 + ids.length) % ids.length;
+    }
+    const id = ids[next];
+    this.theme.setAccent(id);
+    const group = event.currentTarget;
+    if (group instanceof HTMLElement) {
+      group.querySelector<HTMLButtonElement>(`[data-accent="${id}"]`)?.focus();
+    }
   }
 
   protected toggleBell(): void {
@@ -85,13 +129,6 @@ export class Navbar implements OnInit {
     }
     if (item.related_post) {
       void this.router.navigate(['/posts', item.related_post]);
-    }
-  }
-
-  protected onTheme(event: Event): void {
-    const value = (event.target as HTMLSelectElement).value;
-    if (this.themes.some((item) => item.id === value)) {
-      this.theme.set(value as ThemeId);
     }
   }
 

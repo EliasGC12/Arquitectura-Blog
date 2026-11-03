@@ -15,7 +15,7 @@
       <div>
         <p class="name-line">
           <strong>{{ item.autor.username }}</strong>
-          <span class="role">{{ roleLabel(item.autor.rol) }}</span>
+          <span class="role" [attr.data-role]="item.autor.rol">{{ roleLabel(item.autor.rol) }}</span>
         </p>
         <time [attr.datetime]="item.fecha_creacion">{{ timeAgo(item.fecha_creacion) }}</time>
       </div>

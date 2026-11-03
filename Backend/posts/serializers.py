@@ -269,7 +269,11 @@ class PostSerializer(serializers.ModelSerializer):
         comments = list(obj.comments.all())
         user = self.context["request"].user
         if not is_moderator(user):
-            comments = [comment for comment in comments if comment.is_approved]
+            comments = [
+                comment
+                for comment in comments
+                if comment.is_approved or (user.is_authenticated and comment.author_id == user.id)
+            ]
         return CommentSerializer(comments, many=True, context=self.context).data
 
     def validate_titulo_font(self, value):

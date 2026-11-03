@@ -2,13 +2,19 @@ h1 {
   font-size: 1.35rem;
 }
 
+:host {
+  display: block;
+  margin-inline: auto;
+  max-width: 42.5rem;
+}
+
 .composer,
 .post-card,
 .empty {
   background: var(--surface-color);
   border: 1px solid var(--line-color);
-  border-radius: 0.85rem;
-  box-shadow: 0 1px 2px rgb(16 24 40 / 6%);
+  border-radius: 1rem;
+  box-shadow: var(--shadow-sm);
 }
 
 .composer,
@@ -24,7 +30,7 @@ h1 {
 .prompt {
   align-items: center;
   background: var(--bubble-color);
-  border: 0;
+  border: 1px solid transparent;
   border-radius: 999px;
   color: var(--muted-color);
   cursor: pointer;
@@ -34,6 +40,14 @@ h1 {
   padding: 0.45rem 0.9rem 0.45rem 0.45rem;
   text-align: left;
   width: 100%;
+}
+
+.prompt:hover {
+  border-color: var(--primary-color);
+}
+
+.placeholder {
+  color: var(--muted-color);
 }
 
 .quick,
@@ -57,14 +71,35 @@ h1 {
 .pager button,
 .comments button,
 form button {
+  align-items: center;
   background: transparent;
   border: 0;
-  border-radius: 0.55rem;
+  border-radius: 0.65rem;
   color: var(--muted-color);
   cursor: pointer;
+  display: inline-flex;
   font: inherit;
   font-weight: 650;
+  gap: 0.4rem;
   padding: 0.45rem 0.7rem;
+}
+
+.quick svg,
+.tabs svg {
+  fill: none;
+  height: 1.05rem;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.8;
+  width: 1.05rem;
+}
+
+.quick button:hover,
+.tabs button:hover,
+.actions button:hover {
+  background: var(--accent-soft);
+  color: var(--accent-ink);
 }
 
 .tabs button.active,
@@ -72,6 +107,10 @@ form button[type='submit'],
 .comments button[type='submit'] {
   background: var(--primary-color);
   color: var(--primary-contrast);
+}
+
+.tabs button.active {
+  box-shadow: inset 0 -2px 0 var(--primary-hover);
 }
 
 .comment-form button.action-send {
@@ -94,14 +133,12 @@ form button[type='submit'],
 }
 
 .comment-form button.action-send:hover:not(:disabled) {
-  filter: brightness(1.08);
+  background: var(--primary-hover);
   transform: translateY(-1px);
 }
 
-.quick button:hover,
-.tabs button:hover,
-.actions button:hover {
-  background: var(--bubble-color);
+.pager button {
+  border: 1px solid var(--control-border);
 }
 
 form {
@@ -135,7 +172,7 @@ input,
 textarea,
 select {
   background: var(--surface-color);
-  border: 1px solid var(--line-color);
+  border: 1px solid var(--control-border);
   border-radius: 0.65rem;
   color: var(--text-color);
   font: inherit;
@@ -148,6 +185,49 @@ select {
   max-height: 18rem;
   object-fit: cover;
   width: 100%;
+}
+
+.filters {
+  display: grid;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.filter-row {
+  display: grid;
+  gap: 0.4rem;
+}
+
+.filter-row > span {
+  color: var(--muted-color);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+.filter-row div {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.filters button {
+  background: var(--surface-color);
+  border: 1px solid var(--line-color);
+  border-radius: 999px;
+  color: var(--text-color);
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.85rem;
+  font-weight: 650;
+  padding: 0.35rem 0.75rem;
+}
+
+.filters button.active {
+  background: var(--accent-soft);
+  border-color: var(--primary-color);
+  color: var(--accent-ink);
 }
 
 .feed {
@@ -176,12 +256,6 @@ select {
   flex-wrap: wrap;
   gap: 0.4rem;
   margin: 0;
-}
-
-.role {
-  color: var(--primary-color);
-  font-size: 0.78rem;
-  font-weight: 700;
 }
 
 .who {
@@ -265,13 +339,24 @@ select {
 
 .tag,
 .badge {
-  background: var(--bubble-color);
   border-radius: 999px;
+  font-size: 0.78rem;
+  font-weight: 700;
   padding: 0.12rem 0.5rem;
 }
 
+.tag {
+  background: var(--accent-soft);
+  color: var(--accent-ink);
+}
+
+.badge {
+  background: var(--warning-soft);
+  color: var(--warning);
+}
+
 .error {
-  color: #9b1c1c;
+  color: var(--danger);
 }
 
 .comments {
@@ -302,7 +387,7 @@ select {
 .title-tools select,
 .title-tools button {
   background: var(--bubble-color);
-  border: 1px solid var(--line-color);
+  border: 1px solid var(--control-border);
   border-radius: 0.5rem;
   color: var(--text-color);
   font: inherit;
@@ -312,6 +397,8 @@ select {
 .title-tools button.active {
   background: var(--accent-soft);
   border-color: var(--primary-color);
+  box-shadow: inset 0 -2px 0 var(--primary-color);
+  color: var(--accent-ink);
 }
 
 .title-tools input[type='color'] {

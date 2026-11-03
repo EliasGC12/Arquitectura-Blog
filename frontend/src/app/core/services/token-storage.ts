@@ -1,7 +1,7 @@
 import { isPlatformBrowser } from '@angular/common';
 import { inject, PLATFORM_ID, Service } from '@angular/core';
 
-import { THEME_STORAGE_KEY } from './theme';
+import { ACCENT_STORAGE_KEY, MODE_STORAGE_KEY, THEME_STORAGE_KEY } from './theme';
 
 const ACCESS_TOKEN_KEY = 'access_token';
 const REFRESH_TOKEN_KEY = 'refresh_token';
@@ -51,9 +51,17 @@ export class TokenStorage {
     }
 
     const theme = localStorage.getItem(THEME_STORAGE_KEY);
+    const mode = localStorage.getItem(MODE_STORAGE_KEY);
+    const accent = localStorage.getItem(ACCENT_STORAGE_KEY);
     localStorage.clear();
     if (theme) {
       localStorage.setItem(THEME_STORAGE_KEY, theme);
+    }
+    if (mode) {
+      localStorage.setItem(MODE_STORAGE_KEY, mode);
+    }
+    if (accent) {
+      localStorage.setItem(ACCENT_STORAGE_KEY, accent);
     }
   }
 

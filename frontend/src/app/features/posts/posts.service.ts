@@ -128,6 +128,18 @@ export class PostsService {
     return this.http.get<PaginatedPosts>(url ?? POSTS_URL);
   }
 
+  exploreUrl(category = '', tag = ''): string {
+    const params = new URLSearchParams();
+    if (category) {
+      params.set('category', category);
+    }
+    if (tag) {
+      params.set('tag', tag);
+    }
+    const query = params.toString();
+    return query ? `${POSTS_URL}?${query}` : POSTS_URL;
+  }
+
   getMyPosts(): Observable<Post[]> {
     return this.http
       .get<Post[] | PaginatedPosts>(`${POSTS_URL}?mine=1`)

@@ -20,7 +20,7 @@
 .tools select,
 .tools button {
   background: var(--bubble-color);
-  border: 1px solid var(--line-color);
+  border: 1px solid var(--control-border);
   border-radius: 0.5rem;
   color: var(--text-color);
   font: inherit;
@@ -38,7 +38,7 @@
 
 .tools input[type='color'] {
   background: var(--surface-color);
-  border: 1px solid var(--line-color);
+  border: 1px solid var(--control-border);
   border-radius: 0.5rem;
   height: 2.15rem;
   padding: 0.15rem;
@@ -47,7 +47,7 @@
 
 textarea {
   background: var(--surface-color);
-  border: 1px solid var(--line-color);
+  border: 1px solid var(--control-border);
   border-radius: 0.65rem;
   color: var(--editor-color, #1c1e21) !important;
   font-family: var(--editor-font, Arial, sans-serif) !important;
@@ -59,7 +59,8 @@ textarea {
   width: 100%;
 }
 
-textarea:focus {
+textarea:focus-visible {
   border-color: var(--primary-color);
-  outline: none;
+  outline: 2px solid var(--primary-color);
+  outline-offset: 2px;
 }

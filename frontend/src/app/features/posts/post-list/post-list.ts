@@ -76,6 +76,8 @@ export class PostList implements OnInit, OnDestroy {
   protected readonly commentBusy = signal<Record<number, boolean>>({});
   protected readonly categories = signal<Category[]>([]);
   protected readonly tags = signal<Tag[]>([]);
+  protected readonly categoryFilter = signal('');
+  protected readonly tagFilter = signal('');
   protected readonly editingEstado = signal<Post['estado'] | null>(null);
   protected readonly approvingId = signal<number | null>(null);
   protected readonly replyOpen = signal<number | null>(null);
@@ -328,6 +330,26 @@ export class PostList implements OnInit, OnDestroy {
     this.currentPageUrl = url;
     this.errorMessage.set('');
     this.loadPosts();
+  }
+
+  protected selectCategory(slug: string): void {
+    this.categoryFilter.update((current) => (current === slug ? '' : slug));
+    this.applyFilters();
+  }
+
+  protected selectTag(slug: string): void {
+    this.tagFilter.update((current) => (current === slug ? '' : slug));
+    this.applyFilters();
+  }
+
+  protected clearFilters(): void {
+    this.categoryFilter.set('');
+    this.tagFilter.set('');
+    this.applyFilters();
+  }
+
+  protected filtersActive(): boolean {
+    return this.categoryFilter() !== '' || this.tagFilter() !== '';
   }
 
   protected commentDraft(postId: number): string {
@@ -625,6 +647,12 @@ export class PostList implements OnInit, OnDestroy {
       URL.revokeObjectURL(this.objectPreview);
       this.objectPreview = null;
     }
+  }
+
+  private applyFilters(): void {
+    this.currentPageUrl = this.postsService.exploreUrl(this.categoryFilter(), this.tagFilter());
+    this.errorMessage.set('');
+    this.loadPosts();
   }
 
   private loadPosts(created?: Post): void {

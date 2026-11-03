@@ -81,7 +81,7 @@ label {
 
 select {
   background: var(--surface-color);
-  border: 1px solid var(--line-color);
+  border: 1px solid var(--control-border);
   border-radius: 0.7rem;
   color: var(--text-color);
   font: inherit;
@@ -108,14 +108,18 @@ button {
 }
 
 button:hover:not(:disabled) {
-  filter: brightness(1.08);
+  background: var(--primary-hover);
   transform: translateY(-1px);
 }
 
 button.danger {
   background: transparent;
-  border: 1px solid #e11d48;
-  color: #e11d48;
+  border: 1px solid var(--danger);
+  color: var(--danger);
+}
+
+button.danger:hover:not(:disabled) {
+  background: var(--danger-soft);
 }
 
 button:disabled {
@@ -130,8 +134,8 @@ button:disabled {
 }
 
 .error {
-  background: #fde8e8;
-  color: #9b1c1c;
+  background: var(--danger-soft);
+  color: var(--danger);
 }
 
 .success {

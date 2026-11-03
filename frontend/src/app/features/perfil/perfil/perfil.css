@@ -124,7 +124,6 @@
   width: 100%;
 }
 
-.role,
 .email,
 .bio,
 .meta,
@@ -134,9 +133,7 @@ time {
 }
 
 .role {
-  color: var(--primary-color);
-  font-weight: 700;
-  margin: 0.15rem 0 0;
+  margin: 0.35rem 0 0;
 }
 
 .email,
@@ -183,7 +180,7 @@ button.action-send svg {
 }
 
 button.action-send:hover:not(:disabled) {
-  filter: brightness(1.08);
+  background: var(--primary-hover);
   transform: translateY(-1px);
 }
 
@@ -221,7 +218,7 @@ label.cover-btn {
 
 input,
 textarea {
-  border: 1px solid var(--line-color);
+  border: 1px solid var(--control-border);
   border-radius: 0.55rem;
   font: inherit;
   padding: 0.6rem 0.75rem;
@@ -338,11 +335,11 @@ input[type='file'] {
 }
 
 .success {
-  color: #166534;
+  color: var(--success);
 }
 
 .error {
-  color: #9b1c1c;
+  color: var(--danger);
 }
 
 button:disabled {

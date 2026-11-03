@@ -1,23 +1,23 @@
 import { expect, test } from '@playwright/test';
 
-const themes = [
-  { value: 'morado', bar: 'rgb(91, 33, 182)' },
-  { value: 'rojo', bar: 'rgb(159, 18, 57)' },
-  { value: 'oscuro', bar: 'rgb(24, 24, 27)' },
-  { value: 'azul', bar: 'rgb(27, 79, 156)' },
-];
+const accents = ['Morado', 'Rojo', 'Verde', 'Esmeralda', 'Naranja', 'Azul'];
 
-test('el selector de tema cambia la barra sin errores de página', async ({ page }) => {
+test('el modo y el color de acento cambian sin errores de página', async ({ page }) => {
   const errors: string[] = [];
   page.on('pageerror', (error) => errors.push(error.message));
 
   await page.goto('/posts');
-  const select = page.getByLabel('Tema visual');
-  await expect(select).toBeVisible();
+  const mode = page.getByRole('button', { name: /modo/i });
+  await expect(mode).toBeVisible();
 
-  for (const theme of themes) {
-    await select.selectOption(theme.value);
-    await expect(page.locator('app-navbar header')).toHaveCSS('background-color', theme.bar);
+  await mode.click();
+  await expect(page.locator('html')).toHaveAttribute('data-mode', 'oscuro');
+  await mode.click();
+  await expect(page.locator('html')).toHaveAttribute('data-mode', 'claro');
+
+  for (const name of accents) {
+    await page.getByRole('radio', { name, exact: true }).click();
+    await expect(page.locator('html')).toHaveAttribute('data-accent', name.toLowerCase());
   }
 
   expect(errors).toEqual([]);
@@ -33,10 +33,10 @@ test('el selector de fuentes del compositor responde', async ({ page }) => {
   await page.getByRole('button', { name: 'Iniciar Sesión', exact: true }).click();
   await expect(page).toHaveURL(/\/posts/);
 
-  await page.getByRole('button', { name: /Escribir algo/ }).click();
+  await page.getByRole('button', { name: /Qué está pasando en el campus/ }).click();
   const font = page.getByRole('toolbar', { name: 'Formato del texto' }).getByLabel('Fuente');
   await font.selectOption('Georgia');
-  const area = page.getByPlaceholder('Escribir algo...');
+  const area = page.getByPlaceholder('¿Qué está pasando en el campus?');
   await area.fill('Prueba de fuente');
   await expect(area).toHaveCSS('font-family', /Georgia/);
 

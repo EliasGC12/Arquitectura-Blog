@@ -82,7 +82,7 @@ label,
 input,
 textarea {
   background: var(--surface-color);
-  border: 1px solid var(--line-color);
+  border: 1px solid var(--control-border);
   border-radius: 0.8rem;
   color: var(--text-color);
   font: inherit;
@@ -91,10 +91,11 @@ textarea {
   width: 100%;
 }
 
-input:focus,
-textarea:focus {
+input:focus-visible,
+textarea:focus-visible {
   border-color: var(--primary-color);
-  outline: 2px solid color-mix(in srgb, var(--primary-color) 25%, transparent);
+  outline: 2px solid var(--primary-color);
+  outline-offset: 2px;
 }
 
 form button[type='submit'] {
@@ -111,7 +112,7 @@ form button[type='submit'] {
 }
 
 form button[type='submit']:hover:not(:disabled) {
-  filter: brightness(1.08);
+  background: var(--primary-hover);
   transform: translateY(-1px);
 }
 
@@ -181,8 +182,8 @@ form button:disabled {
 }
 
 .error {
-  background: #fde8e8;
-  color: #9b1c1c;
+  background: var(--danger-soft);
+  color: var(--danger);
 }
 
 .success {

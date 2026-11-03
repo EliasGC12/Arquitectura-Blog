@@ -11,9 +11,19 @@
   <link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,400;0,700;1,400;1,700&family=Roboto:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
   <script>
     (function () {
-      var allowed = ['azul', 'morado', 'rojo', 'oscuro'];
-      var saved = localStorage.getItem('blog_fcc_theme');
-      document.documentElement.dataset.theme = allowed.indexOf(saved) >= 0 ? saved : 'azul';
+      var accents = ['azul', 'rojo', 'morado', 'verde', 'esmeralda', 'naranja'];
+      var legacyAccent = { azul: 'azul', morado: 'morado', rojo: 'rojo', oscuro: 'azul' };
+      var legacy = localStorage.getItem('blog_fcc_theme');
+      var accent = localStorage.getItem('blog_fcc_accent');
+      var mode = localStorage.getItem('blog_fcc_mode');
+      if (accents.indexOf(accent) < 0) {
+        accent = legacyAccent[legacy] || 'azul';
+      }
+      if (mode !== 'claro' && mode !== 'oscuro') {
+        mode = legacy === 'oscuro' ? 'oscuro' : 'claro';
+      }
+      document.documentElement.dataset.accent = accent;
+      document.documentElement.dataset.mode = mode;
     })();
   </script>
 </head>
